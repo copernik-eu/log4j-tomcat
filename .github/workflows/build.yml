@@ -69,4 +69,5 @@ jobs:
             --show-version --batch-mode --errors --no-transfer-progress \
             -DtrimStackTrace=false \
             -Dsurefire.rerunFailingTestsCount=2 \
+            -Dgpg.skip=true \
             verify
