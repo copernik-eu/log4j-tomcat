@@ -21,22 +21,13 @@ The artifact contains also a "${tomcat:...}" lookup that resolves all the `class
 
 
 | Placeholder | Value |
----
-| ${tomcat:catalina.engine.name}    | The name of the Tomcat's `Engine` container (e.g. "Catalina") |
-| ${tomcat:classloader.serviceName} |                                                              |
----
+|-|-|
+| ${tomcat:catalina.engine.name}<br/>${tomcat:classloader.serviceName} | The name of the Tomcat's `Engine` container (e.g. "Catalina") |
 | ${tomcat:catalina.engine.logger} | The logger name used by Tomcat's engine |
----
-| ${tomcat:catalina.host.name}   | The name of the Tomcat's `Host` container (e.g. "localhost") |
-| ${tomcat:classloader.hostName} |                                                             |
----
+| ${tomcat:catalina.host.name}<br/>${tomcat:classloader.hostName} | The name of the Tomcat's `Host` container (e.g. "localhost") |
 | ${tomcat:catalina.host.logger} | The logger name used by Tomcat's host |
----
-| ${tomcat:catalina.context.name}  | The name of the Tomcat's `Context` container |
-| ${tomcat:classloader.webappName} |                                             |
----
+| ${tomcat:catalina.context.name}<br/>${tomcat:classloader.webappName} | The name of the Tomcat's `Context` container |
 | ${tomcat:catalina.context.logger} | The logger name used by Tomcat's context (e.g. by `ServletContext#log`) |
----
 
 This allows to write a single Log4j2 configuration for all deployed application, e.g.:
 
