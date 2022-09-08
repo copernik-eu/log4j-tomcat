@@ -51,6 +51,7 @@
   <scm>
     <connection>scm:git:https://github.com/copernik-eu/log4j-plugins.git</connection>
     <developerConnection>scm:git:git@github.com:copernik-eu/log4j-plugins.git</developerConnection>
+    <url>https://github.com/copernik-eu/log4j-plugins</url>
   </scm>
   <issueManagement>
     <system>Github issues</system>
