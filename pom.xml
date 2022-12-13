@@ -65,7 +65,7 @@
   <properties>
     <gpg.keyname>piotr.github@karwasz.org</gpg.keyname>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomcat.version>10.0.23</tomcat.version>
+    <tomcat.version>10.1.4</tomcat.version>
   </properties>
   <distributionManagement>
     <repository>
