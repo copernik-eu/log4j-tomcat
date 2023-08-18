@@ -16,7 +16,7 @@
 package eu.copernik.log4j.tomcat;
 
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.loader.WebappClassLoader;
+import org.apache.catalina.loader.ParallelWebappClassLoader;
 
 /**
  * A classloader that delegates lookups for Log4j2 API classes to the parent classloader.
@@ -37,13 +37,13 @@ import org.apache.catalina.loader.WebappClassLoader;
  * "https://tomcat.apache.org/tomcat-10.0-doc/config/context.html#Defining_a_context">defining a
  * context</a>).
  */
-public class Log4jWebappClassLoader extends WebappClassLoader {
+public class Log4jParallelWebappClassLoader extends ParallelWebappClassLoader {
 
-  public Log4jWebappClassLoader() {
+  public Log4jParallelWebappClassLoader() {
     super();
   }
 
-  public Log4jWebappClassLoader(ClassLoader parent) {
+  public Log4jParallelWebappClassLoader(ClassLoader parent) {
     super(parent);
   }
 
@@ -59,9 +59,9 @@ public class Log4jWebappClassLoader extends WebappClassLoader {
   }
 
   @Override
-  public Log4jWebappClassLoader copyWithoutTransformers() {
+  public Log4jParallelWebappClassLoader copyWithoutTransformers() {
 
-    Log4jWebappClassLoader result = new Log4jWebappClassLoader(getParent());
+    Log4jParallelWebappClassLoader result = new Log4jParallelWebappClassLoader(getParent());
 
     super.copyStateWithoutTransformers(result);
 

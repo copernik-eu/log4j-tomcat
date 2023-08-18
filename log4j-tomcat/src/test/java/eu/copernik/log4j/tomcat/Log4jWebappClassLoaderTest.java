@@ -140,4 +140,24 @@ public class Log4jWebappClassLoaderTest {
               });
     }
   }
+
+  @RepeatedTest(100)
+  public void testParallelLog4jClassloader() throws IOException {
+    try (final URLClassLoader cl = createClassLoader(Log4jParallelWebappClassLoader.class); ) {
+      classes()
+          .forEach(
+              arg -> {
+                final Class<?> clazz = (Class<?>) arg.get()[0];
+                final boolean isEqual = (boolean) arg.get()[1];
+                final Class<?> otherClazz =
+                    assertDoesNotThrow(() -> Class.forName(clazz.getName(), true, cl));
+                final ClassAssert assertion = assertThat(otherClazz);
+                if (isEqual) {
+                  assertion.isEqualTo(clazz);
+                } else {
+                  assertion.isNotEqualTo(clazz);
+                }
+              });
+    }
+  }
 }
