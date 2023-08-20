@@ -61,14 +61,14 @@ public class TomcatLookupTest {
   static Stream<Arguments> data() {
     return Stream.of(
         Arguments.of("classloader.serviceName", ENGINE_NAME),
-        Arguments.of("catalina.engine.name", ENGINE_NAME),
-        Arguments.of("catalina.engine.logger", ENGINE_LOGGERNAME),
+        Arguments.of("engine.name", ENGINE_NAME),
+        Arguments.of("engine.logger", ENGINE_LOGGERNAME),
         Arguments.of("classloader.hostName", HOST_NAME),
-        Arguments.of("catalina.host.name", HOST_NAME),
-        Arguments.of("catalina.host.logger", HOST_LOGGERNAME),
+        Arguments.of("host.name", HOST_NAME),
+        Arguments.of("host.logger", HOST_LOGGERNAME),
         Arguments.of("classloader.webappName", CONTEXT_NAME),
-        Arguments.of("catalina.context.name", CONTEXT_NAME),
-        Arguments.of("catalina.context.logger", CONTEXT_LOGGERNAME),
+        Arguments.of("context.name", CONTEXT_NAME),
+        Arguments.of("context.logger", CONTEXT_LOGGERNAME),
         Arguments.of(null, null));
   }
 
