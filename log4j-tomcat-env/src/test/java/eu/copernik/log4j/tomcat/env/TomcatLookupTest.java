@@ -23,13 +23,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class TomcatLookupTest extends AbstractClassLoaderTest {
+class TomcatLookupTest extends AbstractClassLoaderTest {
 
     private static final String ENGINE_LOGGERNAME = "org.apache.catalina.core.ContainerBase.[" + ENGINE_NAME + "]";
     private static final String HOST_LOGGERNAME = ENGINE_LOGGERNAME + ".[" + HOST_NAME + "]";
     private static final String CONTEXT_LOGGERNAME = HOST_LOGGERNAME + ".[" + CONTEXT_NAME + "]";
 
-    static Stream<Arguments> data() {
+    static Stream<Arguments> lookupWorksProperly() {
         return Stream.of(
                 Arguments.of("classloader.serviceName", ENGINE_NAME),
                 Arguments.of("engine.name", ENGINE_NAME),
@@ -44,8 +44,8 @@ public class TomcatLookupTest extends AbstractClassLoaderTest {
     }
 
     @ParameterizedTest
-    @MethodSource("data")
-    public void lookupWorksProperly(final String key, final String value) {
+    @MethodSource
+    void lookupWorksProperly(final String key, final String value) {
         final StrLookup lookup = new TomcatLookup();
         assertThat(lookup.lookup(key)).isEqualTo(value);
     }
