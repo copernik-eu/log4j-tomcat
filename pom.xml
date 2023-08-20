@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright © 2022 Piotr P. Karwasz
+  ~ Copyright © 2022-2023 Piotr P. Karwasz
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -284,7 +284,7 @@
           <java>
             <licenseHeader>
               <content>/*
- * Copyright © 2022 Piotr P. Karwasz
+ * Copyright © $YEAR Piotr P. Karwasz
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -310,7 +310,7 @@
               <!-- https://www.apache.org/legal/src-headers.html#headers -->
               <content>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;!--
-  ~ Copyright © 2022 Piotr P. Karwasz
+  ~ Copyright © $YEAR Piotr P. Karwasz
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
