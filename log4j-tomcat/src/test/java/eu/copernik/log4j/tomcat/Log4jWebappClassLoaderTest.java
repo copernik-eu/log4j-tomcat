@@ -97,8 +97,8 @@ public class Log4jWebappClassLoaderTest {
         // TODO: loading LoggerContext fails
         // Arguments.of(org.apache.logging.log4j.core.LoggerContext.class, false,
         // false),
-        Arguments.of(Configuration.class, false, false),
-        Arguments.of(TomcatLookup.class, true, true));
+        Arguments.of(Configuration.class, false, false));
+    // Arguments.of(TomcatLookup.class, true, true));
   }
 
   @RepeatedTest(100)
