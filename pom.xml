@@ -95,8 +95,6 @@
   <properties>
     <gpg.keyname>piotr.github@karwasz.org</gpg.keyname>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <spotless.version>2.43.0</spotless.version>
-    <palantir-java-format.version>2.38.0</palantir-java-format.version>
 
     <!-- Enable reproducible builds -->
     <project.build.outputTimestamp>2023-12-10T19:31:00Z</project.build.outputTimestamp>

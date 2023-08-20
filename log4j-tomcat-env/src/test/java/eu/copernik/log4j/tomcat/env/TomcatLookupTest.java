@@ -16,45 +16,18 @@
 package eu.copernik.log4j.tomcat.env;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.withSettings;
 
 import java.util.stream.Stream;
-import org.apache.juli.WebappProperties;
 import org.apache.logging.log4j.core.lookup.StrLookup;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class TomcatLookupTest {
+public class TomcatLookupTest extends AbstractClassLoaderTest {
 
-    private static ClassLoader originalTccl;
-
-    private static final String ENGINE_NAME = "Catalina";
     private static final String ENGINE_LOGGERNAME = "org.apache.catalina.core.ContainerBase.[" + ENGINE_NAME + "]";
-    private static final String HOST_NAME = "localhost";
     private static final String HOST_LOGGERNAME = ENGINE_LOGGERNAME + ".[" + HOST_NAME + "]";
-    private static final String CONTEXT_NAME = "/myapp";
     private static final String CONTEXT_LOGGERNAME = HOST_LOGGERNAME + ".[" + CONTEXT_NAME + "]";
-
-    @BeforeAll
-    public static void setupContextClassloader() {
-        originalTccl = Thread.currentThread().getContextClassLoader();
-        final ClassLoader tccl = mock(ClassLoader.class, withSettings().extraInterfaces(WebappProperties.class));
-        final WebappProperties props = (WebappProperties) tccl;
-        when(props.getServiceName()).thenReturn(ENGINE_NAME);
-        when(props.getHostName()).thenReturn(HOST_NAME);
-        when(props.getWebappName()).thenReturn(CONTEXT_NAME);
-        Thread.currentThread().setContextClassLoader(tccl);
-    }
-
-    @AfterAll
-    public static void clearContextClassloader() {
-        Thread.currentThread().setContextClassLoader(originalTccl);
-    }
 
     static Stream<Arguments> data() {
         return Stream.of(
