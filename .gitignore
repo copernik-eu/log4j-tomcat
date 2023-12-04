@@ -4,4 +4,6 @@ target/
 .classpath
 .project
 .settings/
-# Added by Eclipse:
+# IDEA files
+/.idea/
+*.iml
