@@ -84,7 +84,7 @@
     <gpg.keyname>piotr.github@karwasz.org</gpg.keyname>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <spotless.version>2.38.0</spotless.version>
-    <google-java-format.version>1.17.0</google-java-format.version>
+    <palantir-java-format.version>2.38.0</palantir-java-format.version>
     <tomcat.version>10.0.23</tomcat.version>
   </properties>
 
@@ -300,11 +300,9 @@
  * limitations under the License.
  */</content>
             </licenseHeader>
-            <googleJavaFormat>
-              <version>${google-java-format.version}</version>
-              <style>GOOGLE</style>
-              <reflowLongStrings>true</reflowLongStrings>
-            </googleJavaFormat>
+            <palantirJavaFormat>
+              <version>${palantir-java-format.version}</version>
+            </palantirJavaFormat>
           </java>
           <pom>
             <licenseHeader>

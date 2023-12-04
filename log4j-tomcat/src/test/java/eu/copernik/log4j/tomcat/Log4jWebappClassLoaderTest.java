@@ -54,110 +54,101 @@ import org.junit.jupiter.params.provider.Arguments;
 @TestMethodOrder(Random.class)
 public class Log4jWebappClassLoaderTest {
 
-  private static final String LOG4J_API_LINK = "org.apache.logging.log4j.api.link";
-  private static final String LOG4J_CORE_LINK = "org.apache.logging.log4j.core.link";
+    private static final String LOG4J_API_LINK = "org.apache.logging.log4j.api.link";
+    private static final String LOG4J_CORE_LINK = "org.apache.logging.log4j.core.link";
 
-  private URL findJar(final String link) throws IOException {
-    final ClassLoader cl = Log4jWebappClassLoaderTest.class.getClassLoader();
-    try (final InputStream is = cl.getResourceAsStream(link);
-        final Reader reader = new InputStreamReader(is, StandardCharsets.US_ASCII)) {
-      return new URL(IOUtils.toString(reader));
+    private URL findJar(final String link) throws IOException {
+        final ClassLoader cl = Log4jWebappClassLoaderTest.class.getClassLoader();
+        try (final InputStream is = cl.getResourceAsStream(link);
+                final Reader reader = new InputStreamReader(is, StandardCharsets.US_ASCII)) {
+            return new URL(IOUtils.toString(reader));
+        }
     }
-  }
 
-  private <T extends WebappClassLoaderBase> T createClassLoader(final Class<T> clazz) {
-    try {
-      final WebResourceRoot resources = new StandardRoot(mock(Context.class));
-      resources.createWebResourceSet(
-          ResourceSetType.CLASSES_JAR, "/WEB-INF/classes", findJar(LOG4J_API_LINK), "/");
-      resources.createWebResourceSet(
-          ResourceSetType.CLASSES_JAR, "/WEB-INF/classes", findJar(LOG4J_CORE_LINK), "/");
-      resources.start();
-      final Constructor<T> constructor = clazz.getConstructor(ClassLoader.class);
-      final T cl = constructor.newInstance(Log4jWebappClassLoaderTest.class.getClassLoader());
-      cl.setResources(resources);
-      cl.start();
-      return cl;
-    } catch (ReflectiveOperationException | LifecycleException | IOException e) {
-      fail("Unable to instantiate classloader.", e);
+    private <T extends WebappClassLoaderBase> T createClassLoader(final Class<T> clazz) {
+        try {
+            final WebResourceRoot resources = new StandardRoot(mock(Context.class));
+            resources.createWebResourceSet(
+                    ResourceSetType.CLASSES_JAR, "/WEB-INF/classes", findJar(LOG4J_API_LINK), "/");
+            resources.createWebResourceSet(
+                    ResourceSetType.CLASSES_JAR, "/WEB-INF/classes", findJar(LOG4J_CORE_LINK), "/");
+            resources.start();
+            final Constructor<T> constructor = clazz.getConstructor(ClassLoader.class);
+            final T cl = constructor.newInstance(Log4jWebappClassLoaderTest.class.getClassLoader());
+            cl.setResources(resources);
+            cl.start();
+            return cl;
+        } catch (ReflectiveOperationException | LifecycleException | IOException e) {
+            fail("Unable to instantiate classloader.", e);
+        }
+        // never reached
+        return null;
     }
-    // never reached
-    return null;
-  }
 
-  static Stream<Arguments> classes() {
-    return Stream.of(
-        Arguments.of(LogManager.class, true, false),
-        Arguments.of(DefaultLogBuilder.class, true, false),
-        Arguments.of(Message.class, true, false),
-        Arguments.of(SimpleLogger.class, true, false),
-        Arguments.of(LoggerContext.class, true, false),
-        Arguments.of(StatusListener.class, true, false),
-        Arguments.of(PropertiesUtil.class, true, false),
-        // TODO: loading LoggerContext fails
-        // Arguments.of(org.apache.logging.log4j.core.LoggerContext.class, false,
-        // false),
-        Arguments.of(Configuration.class, false, false));
-    // Arguments.of(TomcatLookup.class, true, true));
-  }
+    static Stream<Arguments> classes() {
+        return Stream.of(
+                Arguments.of(LogManager.class, true, false),
+                Arguments.of(DefaultLogBuilder.class, true, false),
+                Arguments.of(Message.class, true, false),
+                Arguments.of(SimpleLogger.class, true, false),
+                Arguments.of(LoggerContext.class, true, false),
+                Arguments.of(StatusListener.class, true, false),
+                Arguments.of(PropertiesUtil.class, true, false),
+                // TODO: loading LoggerContext fails
+                // Arguments.of(org.apache.logging.log4j.core.LoggerContext.class, false,
+                // false),
+                Arguments.of(Configuration.class, false, false));
+        // Arguments.of(TomcatLookup.class, true, true));
+    }
 
-  @RepeatedTest(100)
-  public void testStandardClassloader() throws IOException {
-    try (final URLClassLoader cl = createClassLoader(WebappClassLoader.class); ) {
-      classes()
-          .forEach(
-              arg -> {
+    @RepeatedTest(100)
+    public void testStandardClassloader() throws IOException {
+        try (final URLClassLoader cl = createClassLoader(WebappClassLoader.class); ) {
+            classes().forEach(arg -> {
                 final Class<?> clazz = (Class<?>) arg.get()[0];
                 final boolean isEqual = (boolean) arg.get()[2];
-                final Class<?> otherClazz =
-                    assertDoesNotThrow(() -> Class.forName(clazz.getName(), true, cl));
+                final Class<?> otherClazz = assertDoesNotThrow(() -> Class.forName(clazz.getName(), true, cl));
                 final ClassAssert assertion = assertThat(otherClazz);
                 if (isEqual) {
-                  assertion.isEqualTo(clazz);
+                    assertion.isEqualTo(clazz);
                 } else {
-                  assertion.isNotEqualTo(clazz);
+                    assertion.isNotEqualTo(clazz);
                 }
-              });
+            });
+        }
     }
-  }
 
-  @RepeatedTest(100)
-  public void testLog4jClassloader() throws IOException {
-    try (final URLClassLoader cl = createClassLoader(Log4jWebappClassLoader.class); ) {
-      classes()
-          .forEach(
-              arg -> {
+    @RepeatedTest(100)
+    public void testLog4jClassloader() throws IOException {
+        try (final URLClassLoader cl = createClassLoader(Log4jWebappClassLoader.class); ) {
+            classes().forEach(arg -> {
                 final Class<?> clazz = (Class<?>) arg.get()[0];
                 final boolean isEqual = (boolean) arg.get()[1];
-                final Class<?> otherClazz =
-                    assertDoesNotThrow(() -> Class.forName(clazz.getName(), true, cl));
+                final Class<?> otherClazz = assertDoesNotThrow(() -> Class.forName(clazz.getName(), true, cl));
                 final ClassAssert assertion = assertThat(otherClazz);
                 if (isEqual) {
-                  assertion.isEqualTo(clazz);
+                    assertion.isEqualTo(clazz);
                 } else {
-                  assertion.isNotEqualTo(clazz);
+                    assertion.isNotEqualTo(clazz);
                 }
-              });
+            });
+        }
     }
-  }
 
-  @RepeatedTest(100)
-  public void testParallelLog4jClassloader() throws IOException {
-    try (final URLClassLoader cl = createClassLoader(Log4jParallelWebappClassLoader.class); ) {
-      classes()
-          .forEach(
-              arg -> {
+    @RepeatedTest(100)
+    public void testParallelLog4jClassloader() throws IOException {
+        try (final URLClassLoader cl = createClassLoader(Log4jParallelWebappClassLoader.class); ) {
+            classes().forEach(arg -> {
                 final Class<?> clazz = (Class<?>) arg.get()[0];
                 final boolean isEqual = (boolean) arg.get()[1];
-                final Class<?> otherClazz =
-                    assertDoesNotThrow(() -> Class.forName(clazz.getName(), true, cl));
+                final Class<?> otherClazz = assertDoesNotThrow(() -> Class.forName(clazz.getName(), true, cl));
                 final ClassAssert assertion = assertThat(otherClazz);
                 if (isEqual) {
-                  assertion.isEqualTo(clazz);
+                    assertion.isEqualTo(clazz);
                 } else {
-                  assertion.isNotEqualTo(clazz);
+                    assertion.isNotEqualTo(clazz);
                 }
-              });
+            });
+        }
     }
-  }
 }

@@ -39,38 +39,38 @@ import org.apache.catalina.loader.WebappClassLoader;
  */
 public class Log4jWebappClassLoader extends WebappClassLoader {
 
-  public Log4jWebappClassLoader() {
-    super();
-  }
-
-  public Log4jWebappClassLoader(ClassLoader parent) {
-    super(parent);
-  }
-
-  @Override
-  protected boolean filter(String name, boolean isClassName) {
-    if (name == null || name.length() < 25) {
-      return super.filter(name, isClassName);
-    }
-    if (ClassLoaderUtil.isLog4jApiResource(name, isClassName)) {
-      return true;
-    }
-    return super.filter(name, isClassName);
-  }
-
-  @Override
-  public Log4jWebappClassLoader copyWithoutTransformers() {
-
-    Log4jWebappClassLoader result = new Log4jWebappClassLoader(getParent());
-
-    super.copyStateWithoutTransformers(result);
-
-    try {
-      result.start();
-    } catch (LifecycleException e) {
-      throw new IllegalStateException(e);
+    public Log4jWebappClassLoader() {
+        super();
     }
 
-    return result;
-  }
+    public Log4jWebappClassLoader(ClassLoader parent) {
+        super(parent);
+    }
+
+    @Override
+    protected boolean filter(String name, boolean isClassName) {
+        if (name == null || name.length() < 25) {
+            return super.filter(name, isClassName);
+        }
+        if (ClassLoaderUtil.isLog4jApiResource(name, isClassName)) {
+            return true;
+        }
+        return super.filter(name, isClassName);
+    }
+
+    @Override
+    public Log4jWebappClassLoader copyWithoutTransformers() {
+
+        Log4jWebappClassLoader result = new Log4jWebappClassLoader(getParent());
+
+        super.copyStateWithoutTransformers(result);
+
+        try {
+            result.start();
+        } catch (LifecycleException e) {
+            throw new IllegalStateException(e);
+        }
+
+        return result;
+    }
 }

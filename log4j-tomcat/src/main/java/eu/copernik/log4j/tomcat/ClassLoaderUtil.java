@@ -17,28 +17,28 @@ package eu.copernik.log4j.tomcat;
 
 class ClassLoaderUtil {
 
-  static boolean isLog4jApiResource(final String name, final boolean isClassName) {
-    if (isClassName && name.startsWith("org.apache.logging.log4j.")) {
-      if (name.indexOf('.', 25) == -1
-          || name.startsWith("internal.", 25)
-          || name.startsWith("message.", 25)
-          || name.startsWith("simple.", 25)
-          || name.startsWith("spi.", 25)
-          || name.startsWith("status.", 25)
-          || name.startsWith("util.", 25)) {
-        return true;
-      }
-    } else if (!isClassName && name.startsWith("org/apache/logging/log4j/")) {
-      if (name.indexOf('/', 25) == -1
-          || name.startsWith("internal/", 25)
-          || name.startsWith("message/", 25)
-          || name.startsWith("simple/", 25)
-          || name.startsWith("spi/", 25)
-          || name.startsWith("status/", 25)
-          || name.startsWith("util/", 25)) {
-        return true;
-      }
+    static boolean isLog4jApiResource(final String name, final boolean isClassName) {
+        if (isClassName && name.startsWith("org.apache.logging.log4j.")) {
+            if (name.indexOf('.', 25) == -1
+                    || name.startsWith("internal.", 25)
+                    || name.startsWith("message.", 25)
+                    || name.startsWith("simple.", 25)
+                    || name.startsWith("spi.", 25)
+                    || name.startsWith("status.", 25)
+                    || name.startsWith("util.", 25)) {
+                return true;
+            }
+        } else if (!isClassName && name.startsWith("org/apache/logging/log4j/")) {
+            if (name.indexOf('/', 25) == -1
+                    || name.startsWith("internal/", 25)
+                    || name.startsWith("message/", 25)
+                    || name.startsWith("simple/", 25)
+                    || name.startsWith("spi/", 25)
+                    || name.startsWith("status/", 25)
+                    || name.startsWith("util/", 25)) {
+                return true;
+            }
+        }
+        return false;
     }
-    return false;
-  }
 }
