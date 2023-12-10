@@ -39,6 +39,12 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11   # 4.1.1
+        with:
+          # When running on `pull_request` use the PR branch, not the target branch
+          ref: github.head_ref
+
       - name: Automatically merge
         env:
           GH_TOKEN: ${{ github.token }}
