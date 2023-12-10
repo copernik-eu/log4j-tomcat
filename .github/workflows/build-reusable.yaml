@@ -55,6 +55,7 @@ jobs:
             --show-version --batch-mode --errors --no-transfer-progress \
             -DtrimStackTrace=false \
             -DinstallAtEnd=true \
+            -Dgpg.skip \
             clean install
 
       # We upload tests results if the build fails.
@@ -76,6 +77,7 @@ jobs:
           ./mvnw \
             --show-version --batch-mode --errors --no-transfer-progress \
             -DskipTests=true \
+            -Dgpg.skip \
             clean verify artifact:compare
 
       # We reproducibility results if the build fails.
