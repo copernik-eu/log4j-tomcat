@@ -28,6 +28,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
 
       - name: Fetch metadata
@@ -38,4 +41,4 @@ jobs:
 
       - name: Automatically merge
         run: |
-          gh pr merge --autor "$PR_URL"
+          gh pr merge --auto "$PR_URL"
