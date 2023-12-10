@@ -41,6 +41,12 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11   # 4.1.1
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Diagnostics
+        run: |
+          echo "$PR_URL"
 
       - name: Automatically merge
         env:
