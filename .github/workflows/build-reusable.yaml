@@ -40,7 +40,7 @@ jobs:
         uses: actions/setup-java@387ac29b308b003ca37ba93a6cab5eb57c8f5f93   # 3.7.0
         with:
           distribution: temurin
-          java-version: ${{ inputs.java-version }}
+          java-version: 11
           java-package: jdk
           architecture: x64
           cache: maven
