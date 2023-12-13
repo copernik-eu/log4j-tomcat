@@ -48,20 +48,14 @@ jobs:
           git_user_signingkey: true
           git_commit_gpgsign: true
 
-      - name: Diagnostics
-        env:
-          HEAD_REF: ${{ github.event.pull_request.head.ref }}
-          PR_REF: ${{ github.head_ref }}
-        run: |
-          echo "$HEAD_REF"
-          echo "$PR_URL"
-
       - name: Automatically merge
         env:
-          HEAD_REF: ${{ github.event.pull_request.head.ref }}
-          PR_REF: ${{ github.head_ref }}
+          BASE: ${{ github.base_ref }}
+          HEAD: ${{ github.head_ref }}
         run: |
-          git fetch origin +"$HEAD_REF"
-          git cherry-pick main.."$PR_REF"
-          git push -f "$PR_URL"
-          git push origin
+          git fetch origin "+refs/heads/$HEAD:refs/remotes/origin/$HEAD"
+          git checkout --track "origin/$HEAD"
+          git rebase "$BASE"
+          git push -f
+          git checkout "$BASE"
+          git push origin "$BASE"
