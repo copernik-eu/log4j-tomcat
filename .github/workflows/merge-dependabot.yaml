@@ -52,7 +52,7 @@ jobs:
           BASE: ${{ github.base_ref }}
           HEAD: ${{ github.head_ref }}
         run: |
-          git fetch origin "+refs/heads/$BASE:refs/remotes/origin/$BASE"
+          git fetch origin "+refs/heads/$BASE:refs/remotes/origin/$BASE" "+refs/heads/$HEAD:refs/remotes/origin/$HEAD"
           git rebase "origin/$BASE"
           # Push the PR branch
           git push -f
