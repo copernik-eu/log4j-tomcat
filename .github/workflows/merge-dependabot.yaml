@@ -33,18 +33,33 @@ jobs:
 
     steps:
 
-      - name: Fetch metadata
-        id: dependabot-metadata
-        uses: dependabot/fetch-metadata@c9c4182bf1b97f5224aee3906fd373f6b61b4526   # 1.6.0
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Checkout repository
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11   # 4.1.1
+        with:
+          # When running on `pull_request` use the PR branch, not the target branch
+          ref: ${{ github.event_name == 'pull_request_target' && github.head_ref || github.ref }}
+
+      - name: Setup GPG
+        id: setup-gpg
+        uses: crazy-max/ghaction-import-gpg@82a020f1f7f605c65dd2449b392a52c3fcfef7ef # 6.0.0
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
+      - name: Diagnostics
+        env:
+          PR_URL: ${{ github.event.pull_request.url }}
+        run: |
+          echo "$PR_URL"
 
       - name: Automatically merge
         env:
-          GH_TOKEN: ${{ github.token }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_URL: ${{ github.event.pull_request.url }}
+          PR_REF: ${{ github.head_ref }}
         run: |
-          gh pr merge --auto -m "$PR_URL"
+          git fetch "$PR_URL"
+          git cherry-pick main.."$PR_REF"
+          git push -f "$PR_URL"
+          git push origin
