@@ -50,16 +50,18 @@ jobs:
 
       - name: Diagnostics
         env:
-          PR_URL: ${{ github.event.pull_request.url }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          PR_REF: ${{ github.head_ref }}
         run: |
+          echo "$HEAD_REF"
           echo "$PR_URL"
 
       - name: Automatically merge
         env:
-          PR_URL: ${{ github.event.pull_request.url }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
           PR_REF: ${{ github.head_ref }}
         run: |
-          git fetch "$PR_URL"
+          git fetch origin +"$HEAD_REF"
           git cherry-pick main.."$PR_REF"
           git push -f "$PR_URL"
           git push origin
