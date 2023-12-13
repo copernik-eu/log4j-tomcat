@@ -83,7 +83,7 @@
   <properties>
     <gpg.keyname>piotr.github@karwasz.org</gpg.keyname>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <spotless.version>2.38.0</spotless.version>
+    <spotless.version>2.41.1</spotless.version>
     <palantir-java-format.version>2.38.0</palantir-java-format.version>
     <tomcat.version>10.1.17</tomcat.version>
 
