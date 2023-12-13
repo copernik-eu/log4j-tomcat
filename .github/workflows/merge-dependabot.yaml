@@ -36,8 +36,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11   # 4.1.1
         with:
-          # When running on `pull_request` use the PR branch, not the target branch
-          ref: ${{ github.event_name == 'pull_request_target' && github.head_ref || github.ref }}
+          ref: ${{ github.head_ref }}
 
       - name: Setup GPG
         id: setup-gpg
@@ -53,9 +52,8 @@ jobs:
           BASE: ${{ github.base_ref }}
           HEAD: ${{ github.head_ref }}
         run: |
-          git fetch origin "+refs/heads/$HEAD:refs/remotes/origin/$HEAD"
-          git checkout --track "origin/$HEAD"
-          git rebase "$BASE"
+          git fetch origin "+refs/heads/$BASE:refs/remotes/origin/$BASE"
+          git rebase "origin/$BASE"
+          # Push the PR branch
           git push -f
-          git checkout "$BASE"
-          git push origin "$BASE"
+          git push origin "HEAD:$BASE"
