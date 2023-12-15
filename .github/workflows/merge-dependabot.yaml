@@ -51,7 +51,6 @@ jobs:
       - name: Automatically merge
         env:
           BASE: ${{ github.base_ref }}
-          HEAD: ${{ github.head_ref }}
         run: |
           git fetch origin "+refs/heads/$BASE:refs/remotes/origin/$BASE"
           git rebase "origin/$BASE"
