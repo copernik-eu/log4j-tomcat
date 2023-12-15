@@ -24,10 +24,12 @@
   <description>Various extensions for Log4j2</description>
   <url>https://github.com/copernik-eu/log4j-plugins</url>
   <inceptionYear>2022</inceptionYear>
+
   <organization>
     <name>Copernik.eu</name>
     <url>https://github.com/copernik-eu</url>
   </organization>
+
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
@@ -35,6 +37,7 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+
   <developers>
     <developer>
       <id>pkarwasz</id>
@@ -54,6 +57,7 @@
     <developerConnection>scm:git:git@github.com:copernik-eu/log4j-plugins.git</developerConnection>
     <url>https://github.com/copernik-eu/log4j-plugins</url>
   </scm>
+
   <issueManagement>
     <system>Github issues</system>
     <url>https://github.com/copernik-eu/log4j-plugins/issues</url>
@@ -62,6 +66,7 @@
     <system>GitHub Actions</system>
     <url>https://github.com/copernik-eu/log4j-plugins/actions</url>
   </ciManagement>
+
   <distributionManagement>
     <repository>
       <id>central</id>
