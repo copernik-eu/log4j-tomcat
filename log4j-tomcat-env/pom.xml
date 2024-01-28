@@ -21,9 +21,9 @@
     <artifactId>log4j-plugins-parent</artifactId>
     <version>3.0.0-SNAPSHOT</version>
   </parent>
-  <artifactId>log4j-tomcat-lookup</artifactId>
-  <name>Log4j Core lookup for Tomcat</name>
-  <description>Log4j Core lookup for Tomcat specific properties.</description>
+  <artifactId>log4j-tomcat-env</artifactId>
+  <name>Log4j Core plugins for Tomcat</name>
+  <description>Log4j Core plugins for Tomcat runtime environment.</description>
 
   <properties>
     <bnd.baseline.fail.on.missing>false</bnd.baseline.fail.on.missing>
