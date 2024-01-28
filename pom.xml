@@ -56,6 +56,7 @@
   <modules>
     <module>log4j-tomcat</module>
     <module>log4j-tomcat-env</module>
+    <module>log4j-tomcat-juli</module>
   </modules>
 
   <scm>
