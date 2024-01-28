@@ -22,13 +22,12 @@
     <version>3.0.0-SNAPSHOT</version>
   </parent>
   <artifactId>log4j-tomcat-lookup</artifactId>
-  <name>Log4j Core plugins for Tomcat</name>
-  <description>Log4j Core plugins that improve logging support on Tomcat</description>
+  <name>Log4j Core lookup for Tomcat</name>
+  <description>Log4j Core lookup for Tomcat specific properties.</description>
   <dependencies>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
-      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
