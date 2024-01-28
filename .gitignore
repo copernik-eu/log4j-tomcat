@@ -7,3 +7,5 @@ target/
 # IDEA files
 /.idea/
 *.iml
+# Maven files
+.flattened-pom.xml

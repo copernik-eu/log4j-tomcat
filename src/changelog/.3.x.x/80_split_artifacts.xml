@@ -3,7 +3,7 @@
        xmlns="http://logging.apache.org/log4j/changelog"
        xsi:schemaLocation="http://logging.apache.org/log4j/changelog https://logging.apache.org/log4j/changelog-0.1.3.xsd"
        type="changed">
-  <issue id="80" link="https://github.com/copernik-eu/log4j-plugins/issues/80">
+  <issue id="80" link="https://github.com/copernik-eu/log4j-plugins/issues/80"/>
   <description format="asciidoc">
     Split Tomcat lookup into a `log4j-tomcat-lookup` artifact.
   </description>

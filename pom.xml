@@ -16,6 +16,12 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.apache.logging</groupId>
+    <artifactId>logging-parent</artifactId>
+    <version>10.6.0</version>
+  </parent>
+
   <groupId>eu.copernik</groupId>
   <artifactId>log4j-plugins-parent</artifactId>
   <version>3.0.0-SNAPSHOT</version>
@@ -62,6 +68,7 @@
     <system>Github issues</system>
     <url>https://github.com/copernik-eu/log4j-plugins/issues</url>
   </issueManagement>
+
   <ciManagement>
     <system>GitHub Actions</system>
     <url>https://github.com/copernik-eu/log4j-plugins/actions</url>
@@ -90,191 +97,95 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <spotless.version>2.43.0</spotless.version>
     <palantir-java-format.version>2.38.0</palantir-java-format.version>
-    <tomcat.version>10.1.18</tomcat.version>
 
     <!-- Enable reproducible builds -->
     <project.build.outputTimestamp>2023-12-10T19:31:00Z</project.build.outputTimestamp>
+
+    <!-- Maven plugin versions -->
+    <exam-maven-plugin.version>4.13.5</exam-maven-plugin.version>
+
+    <!-- Dependency versions -->
+    <assertj-core.version>3.25.2</assertj-core.version>
+    <junit-bom.version>5.10.1</junit-bom.version>
+    <log4j-bom.version>2.22.1</log4j-bom.version>
+    <mockito-core.version>5.10.0</mockito-core.version>
+    <tomcat.version>10.1.18</tomcat.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+
       <dependency>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
-        <version>3.25.2</version>
+        <version>${assertj-core.version}</version>
       </dependency>
+
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.10.1</version>
+        <version>${junit-bom.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-bom</artifactId>
-        <version>2.22.1</version>
+        <version>${log4j-bom.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
-        <version>5.10.0</version>
+        <version>${mockito-core.version}</version>
       </dependency>
+
       <dependency>
         <groupId>org.apache.tomcat</groupId>
         <artifactId>tomcat-catalina</artifactId>
         <version>${tomcat.version}</version>
       </dependency>
+
       <dependency>
         <groupId>org.apache.tomcat</groupId>
         <artifactId>tomcat-juli</artifactId>
         <version>${tomcat.version}</version>
       </dependency>
+
     </dependencies>
   </dependencyManagement>
 
   <build>
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>org.apache.rat</groupId>
-          <artifactId>apache-rat-plugin</artifactId>
-          <version>0.16</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-antrun-plugin</artifactId>
-          <version>3.1.0</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <version>3.6.0</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-clean-plugin</artifactId>
-          <version>3.3.2</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.12.1</version>
-          <configuration>
-            <release>8</release>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-dependency-plugin</artifactId>
-          <version>3.6.1</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-enforcer-plugin</artifactId>
-          <version>3.4.1</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-install-plugin</artifactId>
-          <version>3.1.1</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-gpg-plugin</artifactId>
-          <version>3.1.0</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>3.3.0</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.6.3</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-release-plugin</artifactId>
-          <version>3.0.1</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>3.3.1</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>3.12.1</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-source-plugin</artifactId>
-          <version>3.3.0</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.2.5</version>
-        </plugin>
+
         <plugin>
           <groupId>org.ops4j.pax.exam</groupId>
           <artifactId>exam-maven-plugin</artifactId>
-          <version>4.13.5</version>
+          <version>${exam-maven-plugin.version}</version>
         </plugin>
-        <plugin>
-          <groupId>com.diffplug.spotless</groupId>
-          <artifactId>spotless-maven-plugin</artifactId>
-          <version>${spotless.version}</version>
-        </plugin>
+
       </plugins>
     </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <configuration>
-          <rules>
-            <dependencyConvergence />
-            <requireJavaVersion>
-              <version>[9,)</version>
-            </requireJavaVersion>
-            <requirePluginVersions />
-          </rules>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-plugin</artifactId>
-        <configuration>
-          <consoleOutput>true</consoleOutput>
-        </configuration>
         <executions>
           <execution>
-            <goals>
-              <goal>check</goal>
-            </goals>
-            <phase>verify</phase>
+            <id>dependency-convergence</id>
+            <configuration>
+              <rules>
+                <dependencyConvergence />
+              </rules>
+            </configuration>
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-gpg-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>sign-artifacts</id>
-            <goals>
-              <goal>sign</goal>
-            </goals>
-            <phase>verify</phase>
-          </execution>
-        </executions>
-      </plugin>
+
       <plugin>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
@@ -286,6 +197,7 @@
           <autoReleaseAfterClose>false</autoReleaseAfterClose>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>com.diffplug.spotless</groupId>
         <artifactId>spotless-maven-plugin</artifactId>
@@ -308,9 +220,6 @@
  * limitations under the License.
  */</content>
             </licenseHeader>
-            <palantirJavaFormat>
-              <version>${palantir-java-format.version}</version>
-            </palantirJavaFormat>
           </java>
           <pom>
             <licenseHeader>
@@ -331,24 +240,74 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   --&gt;</content>
-              <delimiter>&lt;project</delimiter>
             </licenseHeader>
-            <sortPom>
-              <expandEmptyElements>false</expandEmptyElements>
-              <!-- Maven Release plugin uses this style -->
-              <spaceBeforeCloseEmptyElement>true</spaceBeforeCloseEmptyElement>
-            </sortPom>
           </pom>
+          <formats>
+            <format>
+              <includes>
+                <include>src/**/*.xml</include>
+              </includes>
+              <excludes>
+                <!-- The license header in changelog entry files causing Git to match irrelevant files.
+                     This is eventually causing merge conflicts.
+                     Hence, we avoid enforcing license headers there. -->
+                <exclude>src/changelog/**/*.xml</exclude>
+              </excludes>
+              <licenseHeader>
+                <!-- https://www.apache.org/legal/src-headers.html#headers -->
+                <content>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!--
+  ~ Copyright © $YEAR Piotr P. Karwasz
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  --&gt;</content>
+                <delimiter>&lt;(!DOCTYPE|\w)</delimiter>
+              </licenseHeader>
+              <endWithNewline />
+              <trimTrailingWhitespace />
+            </format>
+          </formats>
+          <yaml>
+            <includes>
+              <include>.asf.yaml</include>
+              <include>.github/**/*.yaml</include>
+              <include>.github/**/*.yml</include>
+              <include>src/**/*.yaml</include>
+              <include>src/**/*.yml</include>
+            </includes>
+            <licenseHeader>
+              <!-- https://www.apache.org/legal/src-headers.html#headers -->
+              <content>#
+# Copyright © $YEAR Piotr P. Karwasz
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#</content>
+              <delimiter>(##|[^#])</delimiter>
+            </licenseHeader>
+            <endWithNewline />
+            <trimTrailingWhitespace />
+          </yaml>
         </configuration>
-        <executions>
-          <execution>
-            <id>default-spotless</id>
-            <goals>
-              <goal>check</goal>
-            </goals>
-            <phase>verify</phase>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
