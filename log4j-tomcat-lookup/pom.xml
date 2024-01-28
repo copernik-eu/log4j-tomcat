@@ -24,6 +24,11 @@
   <artifactId>log4j-tomcat-lookup</artifactId>
   <name>Log4j Core lookup for Tomcat</name>
   <description>Log4j Core lookup for Tomcat specific properties.</description>
+
+  <properties>
+    <bnd.baseline.fail.on.missing>false</bnd.baseline.fail.on.missing>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
