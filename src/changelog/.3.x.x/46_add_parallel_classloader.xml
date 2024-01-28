@@ -2,9 +2,9 @@
 <entry xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns="http://logging.apache.org/log4j/changelog"
        xsi:schemaLocation="http://logging.apache.org/log4j/changelog https://logging.apache.org/log4j/changelog-0.1.3.xsd"
-       type="changed">
-  <issue id="80" link="https://github.com/copernik-eu/log4j-plugins/issues/80">
+       type="added">
+  <issue id="46" link="https://github.com/copernik-eu/log4j-plugins/issues/46">
   <description format="asciidoc">
-    Split Tomcat lookup into a `log4j-tomcat-lookup` artifact.
+    Add parallel version of `Log4jWebappClassLoader`.
   </description>
 </entry>
