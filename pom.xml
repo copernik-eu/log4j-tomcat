@@ -49,7 +49,7 @@
 
   <modules>
     <module>log4j-tomcat</module>
-    <module>log4j-tomcat-juli</module>
+    <module>log4j-tomcat-lookup</module>
   </modules>
 
   <scm>
