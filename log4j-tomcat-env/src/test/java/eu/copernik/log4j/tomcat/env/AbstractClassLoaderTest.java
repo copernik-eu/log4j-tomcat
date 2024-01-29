@@ -15,13 +15,9 @@
  */
 package eu.copernik.log4j.tomcat.env;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.withSettings;
-
 import java.io.IOException;
-import java.util.Collections;
+import java.net.URL;
+import java.net.URLClassLoader;
 import org.apache.juli.WebappProperties;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -35,18 +31,39 @@ class AbstractClassLoaderTest {
     @BeforeAll
     public static void setupContextClassloader() throws IOException {
         originalTccl = Thread.currentThread().getContextClassLoader();
-        final ClassLoader tccl = mock(ClassLoader.class, withSettings().extraInterfaces(WebappProperties.class));
-        final WebappProperties props = (WebappProperties) tccl;
-        when(props.getServiceName()).thenReturn(ENGINE_NAME);
-        when(props.getHostName()).thenReturn(HOST_NAME);
-        when(props.getWebappName()).thenReturn(CONTEXT_NAME);
-        // to prevent an NPE
-        when(tccl.getResources(anyString())).thenReturn(Collections.emptyEnumeration());
+        final ClassLoader tccl = new TestClassLoader();
         Thread.currentThread().setContextClassLoader(tccl);
     }
 
     @AfterAll
     public static void clearContextClassloader() {
         Thread.currentThread().setContextClassLoader(originalTccl);
+    }
+
+    private static class TestClassLoader extends URLClassLoader implements WebappProperties {
+
+        public TestClassLoader() {
+            super(new URL[0]);
+        }
+
+        @Override
+        public String getWebappName() {
+            return CONTEXT_NAME;
+        }
+
+        @Override
+        public String getHostName() {
+            return HOST_NAME;
+        }
+
+        @Override
+        public String getServiceName() {
+            return ENGINE_NAME;
+        }
+
+        @Override
+        public boolean hasLoggingConfig() {
+            return false;
+        }
     }
 }
