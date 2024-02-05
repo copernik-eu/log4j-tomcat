@@ -105,7 +105,7 @@
     <exam-maven-plugin.version>4.13.5</exam-maven-plugin.version>
 
     <!-- Dependency versions -->
-    <assertj-core.version>3.25.2</assertj-core.version>
+    <assertj-core.version>3.25.3</assertj-core.version>
     <junit-bom.version>5.10.2</junit-bom.version>
     <log4j-bom.version>2.22.1</log4j-bom.version>
     <mockito-core.version>5.10.0</mockito-core.version>
