@@ -109,7 +109,7 @@
     <junit-bom.version>5.10.2</junit-bom.version>
     <log4j-bom.version>2.22.1</log4j-bom.version>
     <mockito-core.version>5.10.0</mockito-core.version>
-    <tomcat.version>10.1.18</tomcat.version>
+    <tomcat.version>10.1.19</tomcat.version>
   </properties>
 
   <dependencyManagement>
