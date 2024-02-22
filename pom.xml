@@ -16,11 +16,6 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.apache.logging</groupId>
-    <artifactId>logging-parent</artifactId>
-    <version>10.6.0</version>
-  </parent>
 
   <groupId>eu.copernik</groupId>
   <artifactId>log4j-plugins-parent</artifactId>
@@ -59,7 +54,7 @@
     <module>log4j-tomcat-juli</module>
   </modules>
 
-  <scm>
+  <scm child.scm.connection.inherit.append.path="false" child.scm.developerConnection.inherit.append.path="false" child.scm.url.inherit.append.path="false">
     <connection>scm:git:https://github.com/copernik-eu/log4j-plugins.git</connection>
     <developerConnection>scm:git:git@github.com:copernik-eu/log4j-plugins.git</developerConnection>
     <url>https://github.com/copernik-eu/log4j-plugins</url>
@@ -97,11 +92,86 @@
     <gpg.keyname>piotr.github@karwasz.org</gpg.keyname>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+    <!-- target Java 8 -->
+    <maven.compiler.source>8</maven.compiler.source>
+    <maven.compiler.target>8</maven.compiler.target>
+    <maven.compiler.release>8</maven.compiler.release>
+
+    <javaBuildVersion>[17,18)</javaBuildVersion>
+
+    <!-- `bnd-maven-plugin` 7.x requires a Maven version `3.8.1` or higher -->
+    <minimalMavenBuildVersion>3.8.1</minimalMavenBuildVersion>
+
+    <!-- JPMS and OSGi options -->
+    <!-- Overrides some options in multi-release JARs -->
+    <bnd-multi-release>false</bnd-multi-release>
+    <!-- Module name: defaults to the OSGi symbolic bundle name -->
+    <bnd-module-name>$[Bundle-SymbolicName]</bnd-module-name>
+    <!--
+          ~ Allows to change imported package attributes (e.g. add 'resolution:=optional')
+          ~ See: https://bnd.bndtools.org/heads/import_package.html
+          -->
+    <bnd-extra-package-options />
+    <!--
+          ~ Allows to override the compute JPMS 'requires' statements.
+          ~ This should be used only if the previous `bnd-extra-package-options` can not be used
+          ~ due to a (reported?) BND bug.
+          ~ See: https://bnd.bndtools.org/chapters/330-jpms.html#advanced-options
+          -->
+    <bnd-extra-module-options />
+    <!-- Allows to extend the `bnd-maven-plugin` configuration with extras: -->
+    <bnd-extra-config />
+
+    <!--
+          ~ These properties allow to override the default `bnd-maven-plugin` configuration through properties.
+          ~ They should be used as a last resort.
+          -->
+    <!--
+          ~ Create OSGi and JPMS module names based on the `groupId` and `artifactId`.
+          ~ This almost agrees with `maven-bundle-plugin`, but replaces non-alphanumeric characters
+          ~ with full stops `.`.
+          -->
+    <bnd-bundle-symbolicname>$[project.groupId].$[subst;$[project.artifactId];[^A-Za-z0-9];.]</bnd-bundle-symbolicname>
+    <bnd-jpms-module-info>$[bnd-module-name];access=0</bnd-jpms-module-info>
+
     <!-- Enable reproducible builds -->
     <project.build.outputTimestamp>2023-12-10T19:31:00Z</project.build.outputTimestamp>
 
+    <!-- Disable maven-site-plugin -->
+    <maven.site.skip>true</maven.site.skip>
+    <maven.site.deploy.skip>true</maven.site.deploy.skip>
+
+    <!-- Maven plugin dependencies -->
+    <error_prone.version>2.24.1</error_prone.version>
+    <findsecbugs-plugin.version>1.12.0</findsecbugs-plugin.version>
+    <palantir-java-format.version>2.40.0</palantir-java-format.version>
+
     <!-- Maven plugin versions -->
+    <apache-rat-plugin.version>0.16</apache-rat-plugin.version>
+    <asciidoctor-maven-plugin.version>2.2.4</asciidoctor-maven-plugin.version>
+    <bnd-baseline-maven-plugin.version>7.0.0</bnd-baseline-maven-plugin.version>
+    <bnd-maven-plugin.version>7.0.0</bnd-maven-plugin.version>
+    <build-helper-maven-plugin.version>3.5.0</build-helper-maven-plugin.version>
+    <cyclonedx-maven-plugin.version>2.7.10</cyclonedx-maven-plugin.version>
     <exam-maven-plugin.version>4.13.5</exam-maven-plugin.version>
+    <flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
+    <log4j-changelog-maven-plugin.version>0.7.0</log4j-changelog-maven-plugin.version>
+    <maven-artifact-plugin.version>3.5.0</maven-artifact-plugin.version>
+    <maven-clean-plugin.version>3.3.2</maven-clean-plugin.version>
+    <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+    <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
+    <maven-enforcer-plugin.version>3.4.1</maven-enforcer-plugin.version>
+    <maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
+    <maven-install-plugin.version>3.1.1</maven-install-plugin.version>
+    <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
+    <maven-javadoc-plugin.version>3.6.2</maven-javadoc-plugin.version>
+    <maven-remote-resources-plugin.version>3.1.0</maven-remote-resources-plugin.version>
+    <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+    <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
+    <maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
+    <spotbugs-maven-plugin.version>4.8.2.0</spotbugs-maven-plugin.version>
+    <spotless-maven-plugin.version>2.41.1</spotless-maven-plugin.version>
+    <xml-maven-plugin.version>1.1.0</xml-maven-plugin.version>
 
     <!-- Dependency versions -->
     <assertj-core.version>3.25.3</assertj-core.version>
@@ -109,6 +179,7 @@
     <log4j-bom.version>2.23.0</log4j-bom.version>
     <mockito-core.version>5.10.0</mockito-core.version>
     <tomcat.version>10.1.19</tomcat.version>
+
   </properties>
 
   <dependencyManagement>
@@ -137,9 +208,39 @@
       </dependency>
 
       <dependency>
+        <groupId>biz.aQute.bnd</groupId>
+        <artifactId>biz.aQute.bnd.annotation</artifactId>
+        <version>7.0.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jspecify</groupId>
+        <artifactId>jspecify</artifactId>
+        <version>0.3.0</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
         <version>${mockito-core.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.osgi</groupId>
+        <artifactId>org.osgi.annotation.bundle</artifactId>
+        <version>2.0.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.osgi</groupId>
+        <artifactId>org.osgi.annotation.versioning</artifactId>
+        <version>1.1.2</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-annotations</artifactId>
+        <version>4.8.3</version>
       </dependency>
 
       <dependency>
@@ -157,9 +258,79 @@
     </dependencies>
   </dependencyManagement>
 
+  <dependencies>
+    <dependency>
+      <groupId>biz.aQute.bnd</groupId>
+      <artifactId>biz.aQute.bnd.annotation</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.annotation.bundle</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.annotation.versioning</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.spotbugs</groupId>
+      <artifactId>spotbugs-annotations</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <id>ossrh</id>
+      <name>OSSRH Snapshots</name>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+    </repository>
+  </repositories>
+
   <build>
     <pluginManagement>
       <plugins>
+
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <version>${apache-rat-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.asciidoctor</groupId>
+          <artifactId>asciidoctor-maven-plugin</artifactId>
+          <version>${asciidoctor-maven-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>biz.aQute.bnd</groupId>
+          <artifactId>bnd-baseline-maven-plugin</artifactId>
+          <version>${bnd-baseline-maven-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>biz.aQute.bnd</groupId>
+          <artifactId>bnd-maven-plugin</artifactId>
+          <version>${bnd-maven-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>${build-helper-maven-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.cyclonedx</groupId>
+          <artifactId>cyclonedx-maven-plugin</artifactId>
+          <version>${cyclonedx-maven-plugin.version}</version>
+        </plugin>
 
         <plugin>
           <groupId>org.ops4j.pax.exam</groupId>
@@ -167,48 +338,388 @@
           <version>${exam-maven-plugin.version}</version>
         </plugin>
 
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>flatten-maven-plugin</artifactId>
+          <version>${flatten-maven-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-changelog-maven-plugin</artifactId>
+          <version>${log4j-changelog-maven-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-artifact-plugin</artifactId>
+          <version>${maven-artifact-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>${maven-clean-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven-compiler-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>${maven-deploy-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>${maven-enforcer-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>${maven-gpg-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>${maven-install-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>${maven-jar-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${maven-javadoc-plugin.version}</version>
+          <configuration>
+            <notimestamp>true</notimestamp>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-remote-resources-plugin</artifactId>
+          <version>${maven-remote-resources-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>${maven-resources-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>${maven-source-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>com.github.spotbugs</groupId>
+          <artifactId>spotbugs-maven-plugin</artifactId>
+          <version>${spotbugs-maven-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>${spotless-maven-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>xml-maven-plugin</artifactId>
+          <version>${xml-maven-plugin.version}</version>
+        </plugin>
+
       </plugins>
     </pluginManagement>
 
     <plugins>
 
-      <!-- Disable Apache Log4j2 SBOM modifications -->
       <plugin>
-        <groupId>com.github.genthaler</groupId>
-        <artifactId>beanshell-maven-plugin</artifactId>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
         <executions>
           <execution>
-            <id>process-sbom</id>
-            <phase>none</phase>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>dependency-convergence</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>verify</phase>
             <configuration>
-              <rules>
-                <dependencyConvergence />
-              </rules>
+              <consoleOutput>true</consoleOutput>
+              <excludes>
+                <exclude>.mvn/jvm.config</exclude>
+                <exclude>src/changelog/**/*.xml</exclude>
+              </excludes>
             </configuration>
           </execution>
         </executions>
       </plugin>
 
       <plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
-        <version>1.6.13</version>
-        <extensions>true</extensions>
+        <groupId>biz.aQute.bnd</groupId>
+        <artifactId>bnd-maven-plugin</artifactId>
         <configuration>
-          <serverId>ossrh</serverId>
-          <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-          <autoReleaseAfterClose>false</autoReleaseAfterClose>
+          <bnd><![CDATA[
+            # `Bundle-DocURL` uses `project.url`.
+            # This is set to `${project.parent.url}${project.artifactId}` through Maven's inheritance assembly[1].
+            # This eventually produces incorrect values.
+            # Hence, we remove them from the produced descriptor.
+            #
+            # `Bundle-SCM` uses `project.scm.url` and suffers from the same inheritance problem `Bundle-DocURL` has.
+            #
+            # [1] https://maven.apache.org/ref/3.9.4/maven-model-builder/#inheritance-assembly
+            #     Inheritance assembly can be disabled for certain properties, e.g., `project.url`.
+            #     Though this would necessitate changes in the root `pom.xml`s of parented projects.
+            #
+            # `Bundle-Developers` is removed, since it is nothing but noise and occupies quite some real estate.
+            -removeheaders: Bundle-DocURL,Bundle-SCM,Bundle-Developers
+
+            # Create OSGi and JPMS module names based on the `groupId` and `artifactId`.
+            # This almost agrees with `maven-bundle-plugin`, but replaces non-alphanumeric characters
+            # with full stops `.`.
+            Bundle-SymbolicName: $[bnd-bundle-symbolicname]
+            -jpms-module-info: $[bnd-jpms-module-info]
+
+            # Prevents an execution error in multi-release jars:
+            -fixupmessages.classes_in_wrong_dir: "Classes found in the wrong directory";restrict:=error;is:=warning
+
+            # Convert API leakage warnings to errors
+            -fixupmessages.priv_refs: "private references";restrict:=warning;is:=error
+
+            # 1. OSGI modules do not make sense in JPMS
+            # 2. BND has a problem detecting the name of multi-release JPMS modules
+            -jpms-module-info-options: \
+              $[bnd-extra-module-options],\
+              org.osgi.core;static=true;transitive=false,\
+              org.osgi.framework;static=true;transitive=false,\
+              org.apache.logging.log4j;substitute="log4j-api",\
+              org.apache.logging.log4j.core;substitute="log4j-core"
+
+            # Import all packages by default:
+            Import-Package: \
+              $[bnd-extra-package-options],\
+              *
+
+            # Adds certain `Implementation-*` and `Specification-*` entries to the generated `MANIFEST.MF`.
+            # Using these properties is known to be a bad practice: https://github.com/apache/logging-log4j2/issues/1923#issuecomment-1786818254
+            # Users should use `META-INF/maven/<groupId>/<artifactId>/pom.properties` instead.
+            # Yet we support it due to backward compatibility reasons.
+            # The issue was reported to `bnd-maven-plugin` too: https://github.com/bndtools/bnd/issues/5855
+            # We set these values to their Maven Archiver defaults: https://maven.apache.org/shared/maven-archiver/#class_manifest
+            Implementation-Title: ${project.name}
+            Implementation-Vendor: ${project.organization.name}
+            Implementation-Version: ${project.version}
+            Specification-Title: ${project.name}
+            Specification-Vendor: ${project.organization.name}
+            Specification-Version: ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}
+          ]]></bnd>
         </configuration>
+        <executions>
+          <execution>
+            <id>generate-module-descriptors</id>
+            <goals>
+              <goal>bnd-process</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- populate the `parsedVersion` property -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>parse-version</id>
+            <goals>
+              <goal>parse-version</goal>
+            </goals>
+            <phase>validate</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.cyclonedx</groupId>
+        <artifactId>cyclonedx-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-sbom</id>
+            <goals>
+              <goal>makeAggregateBom</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!--
+        ~ Removes a trailing `module-info.class` before each compilation to prevent `javac` failures.
+        ~
+        ~ See https://github.com/copernik-eu/bug-reproducibility/tree/main/javac-module-info-bug
+        -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>delete-module-descriptor</id>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+            <phase>process-resources</phase>
+            <configuration>
+              <excludeDefaultDirectories>true</excludeDefaultDirectories>
+              <filesets>
+                <fileset>
+                  <directory>${project.build.outputDirectory}</directory>
+                  <includes>
+                    <include>module-info.class</include>
+                  </includes>
+                </fileset>
+              </filesets>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <encoding>UTF-8</encoding>
+          <parameters>true</parameters>
+          <compilerArgs>
+            <arg>-Xlint:all</arg>
+            <arg>-XDcompilePolicy=simple</arg>
+            <arg>-Xplugin:ErrorProne</arg>
+          </compilerArgs>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>com.google.errorprone</groupId>
+              <artifactId>error_prone_core</artifactId>
+              <version>${error_prone.version}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <inherited>false</inherited>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <groupId>de.skuzzle.enforcer</groupId>
+            <artifactId>restrict-imports-enforcer-rule</artifactId>
+            <version>2.4.0</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>validate-build-environment</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <dependencyConvergence />
+                <requireJavaVersion>
+                  <version>${javaBuildVersion}</version>
+                </requireJavaVersion>
+                <requireMavenVersion>
+                  <version>${minimalMavenBuildVersion}</version>
+                </requireMavenVersion>
+                <RestrictImports>
+                  <reason>Expand all wildcard imports</reason>
+                  <bannedImport>**.'*'</bannedImport>
+                </RestrictImports>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Configure `maven-jar-plugin` to take `MANIFEST.MF` generated by `bnd:bnd-process` into account.
+           For more information, see: https://github.com/bndtools/bnd/blob/master/maven-plugins/bnd-maven-plugin/README.md#important-note-about-maven-jarwar-plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-remote-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>process-resource-bundles</id>
+            <goals>
+              <goal>process</goal>
+            </goals>
+            <configuration>
+              <resourceBundles>
+                <resourceBundle>org.apache.apache.resources:apache-jar-resource-bundle:1.5</resourceBundle>
+              </resourceBundles>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>spotbugs-check</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>verify</phase>
+            <configuration>
+              <excludeFilterFile>${maven.multiModuleProjectDirectory}/spotbugs-exclude.xml</excludeFilterFile>
+              <fork>false</fork>
+              <plugins>
+                <plugin>
+                  <groupId>com.h3xstream.findsecbugs</groupId>
+                  <artifactId>findsecbugs-plugin</artifactId>
+                  <version>${findsecbugs-plugin.version}</version>
+                </plugin>
+              </plugins>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
@@ -217,7 +728,7 @@
         <configuration>
           <java>
             <licenseHeader>
-              <content>/*
+              <content><![CDATA[/*
  * Copyright © $YEAR Piotr P. Karwasz
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -231,14 +742,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */</content>
+ */]]></content>
             </licenseHeader>
+            <palantirJavaFormat>
+              <version>${palantir-java-format.version}</version>
+            </palantirJavaFormat>
           </java>
           <pom>
             <licenseHeader>
               <!-- https://www.apache.org/legal/src-headers.html#headers -->
-              <content>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;!--
+              <content><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!--
   ~ Copyright © $YEAR Piotr P. Karwasz
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -252,8 +766,14 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  --&gt;</content>
+  -->]]></content>
+              <delimiter>&lt;project</delimiter>
             </licenseHeader>
+            <sortPom>
+              <expandEmptyElements>false</expandEmptyElements>
+              <!-- Maven Release plugin uses this style -->
+              <spaceBeforeCloseEmptyElement>true</spaceBeforeCloseEmptyElement>
+            </sortPom>
           </pom>
           <formats>
             <format>
@@ -262,14 +782,14 @@
               </includes>
               <excludes>
                 <!-- The license header in changelog entry files causing Git to match irrelevant files.
-                     This is eventually causing merge conflicts.
-                     Hence, we avoid enforcing license headers there. -->
+                                     This is eventually causing merge conflicts.
+                                     Hence, we avoid enforcing license headers there. -->
                 <exclude>src/changelog/**/*.xml</exclude>
               </excludes>
               <licenseHeader>
                 <!-- https://www.apache.org/legal/src-headers.html#headers -->
-                <content>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;!--
+                <content><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!--
   ~ Copyright © $YEAR Piotr P. Karwasz
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -283,7 +803,7 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  --&gt;</content>
+  -->]]></content>
                 <delimiter>&lt;(!DOCTYPE|\w)</delimiter>
               </licenseHeader>
               <endWithNewline />
@@ -294,13 +814,11 @@
             <includes>
               <include>.asf.yaml</include>
               <include>.github/**/*.yaml</include>
-              <include>.github/**/*.yml</include>
               <include>src/**/*.yaml</include>
-              <include>src/**/*.yml</include>
             </includes>
             <licenseHeader>
               <!-- https://www.apache.org/legal/src-headers.html#headers -->
-              <content>#
+              <content><![CDATA[#
 # Copyright © $YEAR Piotr P. Karwasz
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -314,7 +832,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#</content>
+#]]></content>
               <delimiter>(##|[^#])</delimiter>
             </licenseHeader>
             <endWithNewline />
@@ -324,4 +842,96 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+
+    <profile>
+
+      <id>flatten-jar-pom</id>
+
+      <activation>
+        <file>
+          <exists>src/main/java</exists>
+        </file>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>flatten-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>flatten-all</id>
+                <goals>
+                  <goal>flatten</goal>
+                </goals>
+                <phase>process-resources</phase>
+                <configuration>
+                  <flattenDependencyMode>all</flattenDependencyMode>
+                  <flattenMode>ossrh</flattenMode>
+                  <omitExclusions>true</omitExclusions>
+                </configuration>
+              </execution>
+              <execution>
+                <id>clean-flattened-pom</id>
+                <goals>
+                  <goal>clean</goal>
+                </goals>
+                <phase>clean</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+
+      <id>release</id>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- Dummy profile to trigger updates for these dependencies -->
+    <profile>
+
+      <id>dummy-dependabot</id>
+
+      <dependencies>
+        <dependency>
+          <groupId>com.google.errorprone</groupId>
+          <artifactId>error_prone_core</artifactId>
+          <version>${error_prone.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.h3xstream.findsecbugs</groupId>
+          <artifactId>findsecbugs-plugin</artifactId>
+          <version>${findsecbugs-plugin.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.palantir.javaformat</groupId>
+          <artifactId>palantir-java-format</artifactId>
+          <version>${palantir-java-format.version}</version>
+        </dependency>
+      </dependencies>
+    </profile>
+
+  </profiles>
+
 </project>

@@ -15,6 +15,7 @@
  */
 package eu.copernik.log4j.tomcat;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.loader.ParallelWebappClassLoader;
 
@@ -59,6 +60,7 @@ public class Log4jParallelWebappClassLoader extends ParallelWebappClassLoader {
     }
 
     @Override
+    @SuppressFBWarnings("DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED")
     public Log4jParallelWebappClassLoader copyWithoutTransformers() {
 
         Log4jParallelWebappClassLoader result = new Log4jParallelWebappClassLoader(getParent());

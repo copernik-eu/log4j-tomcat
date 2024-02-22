@@ -15,6 +15,7 @@
  */
 package eu.copernik.log4j.tomcat;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.loader.WebappClassLoader;
 
@@ -59,6 +60,7 @@ public class Log4jWebappClassLoader extends WebappClassLoader {
     }
 
     @Override
+    @SuppressFBWarnings("DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED")
     public Log4jWebappClassLoader copyWithoutTransformers() {
 
         Log4jWebappClassLoader result = new Log4jWebappClassLoader(getParent());
