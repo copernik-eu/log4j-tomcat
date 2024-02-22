@@ -36,7 +36,7 @@ class Log4jLogTest {
     void location() {
         final Log log = LogFactory.getLog("location");
         int i = 0;
-        int currentLine = 37;
+        int currentLine = 39;
         log.trace(MESSAGE + i++);
         log.trace(MESSAGE + i++, T);
         log.debug(MESSAGE + i++);

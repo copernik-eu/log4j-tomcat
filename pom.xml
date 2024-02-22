@@ -135,7 +135,7 @@
     <bnd-jpms-module-info>$[bnd-module-name];access=0</bnd-jpms-module-info>
 
     <!-- Enable reproducible builds -->
-    <project.build.outputTimestamp>2023-12-10T19:31:00Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2024-02-22T21:28:00Z</project.build.outputTimestamp>
 
     <!-- Disable maven-site-plugin -->
     <maven.site.skip>true</maven.site.skip>
