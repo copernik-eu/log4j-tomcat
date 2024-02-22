@@ -21,8 +21,8 @@
     <artifactId>log4j-plugins-parent</artifactId>
     <version>3.0.0-SNAPSHOT</version>
   </parent>
-  <artifactId>log4j-tomcat-env</artifactId>
-  <name>Log4j Core plugins for Tomcat</name>
+  <artifactId>log4j-tomcat-juli-core</artifactId>
+  <name>Log4j Core plugins for Tomcat JULI</name>
   <description>Log4j Core plugins for Tomcat runtime environment.</description>
 
   <properties>

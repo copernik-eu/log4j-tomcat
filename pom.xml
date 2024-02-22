@@ -50,8 +50,8 @@
 
   <modules>
     <module>log4j-tomcat</module>
-    <module>log4j-tomcat-env</module>
     <module>log4j-tomcat-juli</module>
+    <module>log4j-tomcat-juli-core</module>
   </modules>
 
   <scm child.scm.connection.inherit.append.path="false" child.scm.developerConnection.inherit.append.path="false" child.scm.url.inherit.append.path="false">

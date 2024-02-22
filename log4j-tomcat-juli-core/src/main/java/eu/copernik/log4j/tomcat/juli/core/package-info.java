@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Piotr P. Karwasz
+ * Copyright © 2024 Piotr P. Karwasz
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package eu.copernik.log4j.tomcat.env;
+@Export
+@Version("3.0.0")
+package eu.copernik.log4j.tomcat.juli.core;
 
-import java.net.URI;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.async.AsyncLoggerContext;
-
-public class TomcatAsyncContextSelector extends TomcatContextSelector {
-
-    @Override
-    protected LoggerContext createContext(final String name, final URI configLocation) {
-        final AsyncLoggerContext context = new AsyncLoggerContext(name, null, configLocation);
-        context.addShutdownListener(this);
-        return context;
-    }
-}
+import org.osgi.annotation.bundle.Export;
+import org.osgi.annotation.versioning.Version;

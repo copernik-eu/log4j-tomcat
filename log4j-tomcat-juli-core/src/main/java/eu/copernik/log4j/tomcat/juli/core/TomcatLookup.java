@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package eu.copernik.log4j.tomcat.env;
+package eu.copernik.log4j.tomcat.juli.core;
 
 import org.apache.juli.WebappProperties;
 import org.apache.logging.log4j.core.LogEvent;
