@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.lang.instrument.ClassFileTransformer;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -45,14 +46,15 @@ import org.apache.logging.log4j.simple.SimpleLogger;
 import org.apache.logging.log4j.spi.LoggerContext;
 import org.apache.logging.log4j.status.StatusListener;
 import org.apache.logging.log4j.util.PropertiesUtil;
-import org.assertj.core.api.ClassAssert;
 import org.junit.jupiter.api.MethodOrderer.Random;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @TestMethodOrder(Random.class)
-public class Log4jWebappClassLoaderTest {
+class Log4jWebappClassLoaderTest {
 
     private static final String LOG4J_API_LINK = "org.apache.logging.log4j.api.link";
     private static final String LOG4J_CORE_LINK = "org.apache.logging.log4j.core.link";
@@ -102,53 +104,54 @@ public class Log4jWebappClassLoaderTest {
     }
 
     @RepeatedTest(100)
-    public void testStandardClassloader() throws IOException {
+    void testStandardClassloader() throws IOException {
         try (final URLClassLoader cl = createClassLoader(WebappClassLoader.class); ) {
-            classes().forEach(arg -> {
-                final Class<?> clazz = (Class<?>) arg.get()[0];
-                final boolean isEqual = (boolean) arg.get()[2];
-                final Class<?> otherClazz = assertDoesNotThrow(() -> Class.forName(clazz.getName(), true, cl));
-                final ClassAssert assertion = assertThat(otherClazz);
-                if (isEqual) {
-                    assertion.isEqualTo(clazz);
-                } else {
-                    assertion.isNotEqualTo(clazz);
-                }
-            });
+            classes().forEach(arg -> assertLoadsCorrectClass((Class<?>) arg.get()[0], (boolean) arg.get()[2], cl));
         }
     }
 
     @RepeatedTest(100)
-    public void testLog4jClassloader() throws IOException {
+    void testLog4jClassloader() throws IOException {
         try (final URLClassLoader cl = createClassLoader(Log4jWebappClassLoader.class); ) {
-            classes().forEach(arg -> {
-                final Class<?> clazz = (Class<?>) arg.get()[0];
-                final boolean isEqual = (boolean) arg.get()[1];
-                final Class<?> otherClazz = assertDoesNotThrow(() -> Class.forName(clazz.getName(), true, cl));
-                final ClassAssert assertion = assertThat(otherClazz);
-                if (isEqual) {
-                    assertion.isEqualTo(clazz);
-                } else {
-                    assertion.isNotEqualTo(clazz);
-                }
-            });
+            classes().forEach(arg -> assertLoadsCorrectClass((Class<?>) arg.get()[0], (boolean) arg.get()[1], cl));
         }
     }
 
     @RepeatedTest(100)
-    public void testParallelLog4jClassloader() throws IOException {
+    void testParallelLog4jClassloader() throws IOException {
         try (final URLClassLoader cl = createClassLoader(Log4jParallelWebappClassLoader.class); ) {
-            classes().forEach(arg -> {
-                final Class<?> clazz = (Class<?>) arg.get()[0];
-                final boolean isEqual = (boolean) arg.get()[1];
-                final Class<?> otherClazz = assertDoesNotThrow(() -> Class.forName(clazz.getName(), true, cl));
-                final ClassAssert assertion = assertThat(otherClazz);
-                if (isEqual) {
-                    assertion.isEqualTo(clazz);
-                } else {
-                    assertion.isNotEqualTo(clazz);
-                }
-            });
+            classes().forEach(arg -> assertLoadsCorrectClass((Class<?>) arg.get()[0], (boolean) arg.get()[1], cl));
+        }
+    }
+
+    private void assertLoadsCorrectClass(
+            final Class<?> clazz, final boolean shouldBeEqual, final URLClassLoader loader) {
+        final String classResource = clazz.getName().replace('.', '/') + ".class";
+        final URL clazzUrl = getClass().getClassLoader().getResource(classResource);
+        final Class<?> otherClazz = assertDoesNotThrow(() -> Class.forName(clazz.getName(), true, loader));
+        final URL otherClazzUrl = loader.getResource(classResource);
+        if (shouldBeEqual) {
+            assertThat(otherClazz).isEqualTo(clazz);
+        } else {
+            assertThat(otherClazz).isNotEqualTo(clazz);
+        }
+        // URLs are always equal
+        assertThat(otherClazzUrl).isEqualTo(clazzUrl);
+    }
+
+    static Stream<Class<? extends WebappClassLoaderBase>> testCopyWithoutTransformers() {
+        return Stream.of(Log4jWebappClassLoader.class, Log4jParallelWebappClassLoader.class);
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testCopyWithoutTransformers(final Class<? extends WebappClassLoaderBase> loaderClass) throws IOException {
+        try (final WebappClassLoaderBase cl = createClassLoader(loaderClass); ) {
+            final ClassFileTransformer transformer = mock(ClassFileTransformer.class);
+            cl.addTransformer(transformer);
+            assertThat(cl.toString()).contains("Class file transformers");
+            final ClassLoader copy = cl.copyWithoutTransformers();
+            assertThat(copy.toString()).doesNotContain("Class file transformers");
         }
     }
 }
