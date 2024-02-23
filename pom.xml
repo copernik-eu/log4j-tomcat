@@ -147,7 +147,7 @@
     <palantir-java-format.version>2.40.0</palantir-java-format.version>
 
     <!-- Maven plugin versions -->
-    <apache-rat-plugin.version>0.16</apache-rat-plugin.version>
+    <apache-rat-plugin.version>0.16.1</apache-rat-plugin.version>
     <asciidoctor-maven-plugin.version>2.2.4</asciidoctor-maven-plugin.version>
     <bnd-baseline-maven-plugin.version>7.0.0</bnd-baseline-maven-plugin.version>
     <bnd-maven-plugin.version>7.0.0</bnd-maven-plugin.version>
