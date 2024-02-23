@@ -65,8 +65,9 @@ jobs:
         with:
           fail_ci_if_error: true
           slug: copernik-eu/log4j-plugins
-          token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
+        env:
+          CODECOV.TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       # We upload tests results if the build fails.
       - name: Upload test results
