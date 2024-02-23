@@ -60,6 +60,13 @@ jobs:
             -Dgpg.skip \
             clean install
 
+      - name: Upload test coverage
+        uses: codecov/codecov-action@0cfda1dd0a4ad9efc75517f399d859cd1ea4ced1 # 4.0.2
+        with:
+          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }} # required
+          verbose: true
+
       # We upload tests results if the build fails.
       - name: Upload test results
         if: failure() && steps.build.conclusion == 'failure'
