@@ -18,6 +18,10 @@ name: build-reusable
 
 on:
   workflow_call:
+    secrets:
+      CODECOV_TOKEN:
+        description: Codecov.io token
+        required: true
 
 jobs:
 
@@ -67,8 +71,6 @@ jobs:
           slug: copernik-eu/log4j-plugins
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       # We upload tests results if the build fails.
       - name: Upload test results
