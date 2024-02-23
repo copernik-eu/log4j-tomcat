@@ -53,15 +53,12 @@ jobs:
         id: build
         shell: bash
         run: |
-          echo $CODECOV_TOKEN
           ./mvnw \
             --show-version --batch-mode --errors --no-transfer-progress \
             -DtrimStackTrace=false \
             -DinstallAtEnd=true \
             -Dgpg.skip \
             clean install
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Upload test coverage
         uses: codecov/codecov-action@0cfda1dd0a4ad9efc75517f399d859cd1ea4ced1 # 4.0.2
@@ -70,6 +67,8 @@ jobs:
           slug: copernik-eu/log4j-plugins
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       # We upload tests results if the build fails.
       - name: Upload test results
