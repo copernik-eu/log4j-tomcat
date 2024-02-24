@@ -15,52 +15,26 @@
  */
 package eu.copernik.log4j.tomcat.juli.core;
 
-import static eu.copernik.log4j.tomcat.juli.core.GlobalTomcatContextSelectorTest.checkContextMethods;
-import static eu.copernik.log4j.tomcat.juli.core.GlobalTomcatContextSelectorTest.checkShutdown;
+import static eu.copernik.log4j.tomcat.juli.core.junit.ContextClassLoaderExtension.CONTEXT_NAME;
+import static eu.copernik.log4j.tomcat.juli.core.junit.ContextClassLoaderExtension.ENGINE_NAME;
+import static eu.copernik.log4j.tomcat.juli.core.junit.ContextClassLoaderExtension.HOST_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import eu.copernik.log4j.tomcat.juli.core.junit.ContextClassLoaderExtension;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
-import java.util.stream.Stream;
 import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.async.AsyncLoggerContext;
-import org.apache.logging.log4j.core.impl.ContextAnchor;
 import org.apache.logging.log4j.core.selector.ContextSelector;
-import org.apache.logging.log4j.spi.LoggerContextShutdownAware;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mockito;
 
-class TomcatContextSelectorTest extends AbstractClassLoaderTest {
+@ExtendWith(ContextClassLoaderExtension.class)
+class TomcatContextSelectorTest extends GlobalTomcatContextSelectorTest {
 
-    static Stream<Arguments> selectors() {
-        return Stream.of(
-                Arguments.of(new TomcatContextSelector(), LoggerContext.class),
-                Arguments.of(new TomcatAsyncContextSelector(), AsyncLoggerContext.class));
-    }
-
-    @ParameterizedTest
-    @MethodSource("selectors")
-    void allMethods(final ContextSelector selector, final Class<? extends LoggerContext> contextClass)
-            throws Exception {
-        final LoggerContext context = selector.getContext(null, null, false);
-        assertThat(context).isExactlyInstanceOf(contextClass);
-        final LoggerContext currentContext = new LoggerContext("current");
-        ContextAnchor.THREAD_CONTEXT.set(currentContext);
-        assertThat(context.getName()).isEqualTo("/" + ENGINE_NAME + "/" + HOST_NAME + "/" + CONTEXT_NAME);
-        // Caused both contexts to be removed
-        checkContextMethods(selector, context, currentContext);
-        // Checks shutdown of new context
-        checkShutdown(selector, context);
-    }
-
-    @Test
-    void isNotClassLoaderDependent() {
-        assertThat(new TomcatContextSelector().isClassLoaderDependent()).isFalse();
-        assertThat(new TomcatAsyncContextSelector().isClassLoaderDependent()).isFalse();
+    @Override
+    protected String getExpectedContextName() {
+        return "/" + ENGINE_NAME + "/" + HOST_NAME + "/" + CONTEXT_NAME;
     }
 
     @ParameterizedTest
@@ -77,12 +51,5 @@ class TomcatContextSelectorTest extends AbstractClassLoaderTest {
         // Test methods the retrieve the context
         assertThat(selector.hasContext(null, null, false)).isFalse();
         assertThat(selector.getLoggerContexts()).isEmpty();
-    }
-
-    @ParameterizedTest
-    @MethodSource("selectors")
-    void testShutdownSupportOtherLoggerContextTypes(final LoggerContextShutdownAware selector) {
-        assertDoesNotThrow(
-                () -> selector.contextShutdown(Mockito.mock(org.apache.logging.log4j.spi.LoggerContext.class)));
     }
 }

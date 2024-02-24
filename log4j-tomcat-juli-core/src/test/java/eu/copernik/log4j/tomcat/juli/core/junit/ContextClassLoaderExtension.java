@@ -13,31 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package eu.copernik.log4j.tomcat.juli.core;
+package eu.copernik.log4j.tomcat.juli.core.junit;
 
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import org.apache.juli.WebappProperties;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
+import org.junit.jupiter.api.extension.ExtensionContext.Store;
 
-class AbstractClassLoaderTest {
-    protected static final String ENGINE_NAME = "Catalina";
-    protected static final String HOST_NAME = "localhost";
-    protected static final String CONTEXT_NAME = "/myapp";
-    private static ClassLoader originalTccl;
+public class ContextClassLoaderExtension implements BeforeAllCallback {
+    public static final String ENGINE_NAME = "Catalina";
+    public static final String HOST_NAME = "localhost";
+    public static final String CONTEXT_NAME = "/myapp";
 
-    @BeforeAll
-    public static void setupContextClassloader() throws IOException {
-        originalTccl = Thread.currentThread().getContextClassLoader();
+    @Override
+    public void beforeAll(final ExtensionContext context) throws IOException {
+        final ClassLoader originalTccl = Thread.currentThread().getContextClassLoader();
         final ClassLoader tccl = new TestClassLoader();
         Thread.currentThread().setContextClassLoader(tccl);
-    }
-
-    @AfterAll
-    public static void clearContextClassloader() {
-        Thread.currentThread().setContextClassLoader(originalTccl);
+        context.getStore(Namespace.GLOBAL).put(ContextClassLoaderExtension.class, (Store.CloseableResource)
+                () -> Thread.currentThread().setContextClassLoader(originalTccl));
     }
 
     private static class TestClassLoader extends URLClassLoader implements WebappProperties {

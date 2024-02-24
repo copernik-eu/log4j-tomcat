@@ -16,6 +16,7 @@
 package eu.copernik.log4j.tomcat.juli.core;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.net.URI;
 import java.net.URL;
@@ -27,9 +28,12 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.async.AsyncLoggerContext;
 import org.apache.logging.log4j.core.impl.ContextAnchor;
 import org.apache.logging.log4j.core.selector.ContextSelector;
+import org.apache.logging.log4j.spi.LoggerContextShutdownAware;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mockito;
 
 class GlobalTomcatContextSelectorTest {
 
@@ -50,14 +54,31 @@ class GlobalTomcatContextSelectorTest {
         assertThat(context).isExactlyInstanceOf(contextClass);
         final LoggerContext currentContext = new LoggerContext("current");
         ContextAnchor.THREAD_CONTEXT.set(currentContext);
-        assertThat(context.getName()).isEqualTo("-tomcat");
+        assertThat(context.getName()).isEqualTo(getExpectedContextName());
         // Caused both contexts to be removed
         checkContextMethods(selector, context, currentContext);
         // Checks shutdown of new context
         checkShutdown(selector, context);
     }
 
-    static void checkContextMethods(
+    protected String getExpectedContextName() {
+        return "-tomcat";
+    }
+
+    @Test
+    void isNotClassLoaderDependent() {
+        assertThat(new TomcatContextSelector().isClassLoaderDependent()).isFalse();
+        assertThat(new TomcatAsyncContextSelector().isClassLoaderDependent()).isFalse();
+    }
+
+    @ParameterizedTest
+    @MethodSource("selectors")
+    void testShutdownSupportOtherLoggerContextTypes(final LoggerContextShutdownAware selector) {
+        assertDoesNotThrow(
+                () -> selector.contextShutdown(Mockito.mock(org.apache.logging.log4j.spi.LoggerContext.class)));
+    }
+
+    private static void checkContextMethods(
             final ContextSelector selector, final LoggerContext context, final LoggerContext currentContext)
             throws Exception {
         assertThat(context.getState()).isEqualTo(State.INITIALIZED);
@@ -153,7 +174,7 @@ class GlobalTomcatContextSelectorTest {
         assertThat(selector.hasContext(null, null, true)).isFalse();
     }
 
-    static void checkShutdown(final ContextSelector selector, final LoggerContext oldContext) {
+    private static void checkShutdown(final ContextSelector selector, final LoggerContext oldContext) {
         // A new context
         final LoggerContext context = selector.getContext(null, null, false);
         assertThat(context).isNotEqualTo(oldContext);

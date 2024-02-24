@@ -15,14 +15,20 @@
  */
 package eu.copernik.log4j.tomcat.juli.core;
 
+import static eu.copernik.log4j.tomcat.juli.core.junit.ContextClassLoaderExtension.CONTEXT_NAME;
+import static eu.copernik.log4j.tomcat.juli.core.junit.ContextClassLoaderExtension.ENGINE_NAME;
+import static eu.copernik.log4j.tomcat.juli.core.junit.ContextClassLoaderExtension.HOST_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import eu.copernik.log4j.tomcat.juli.core.junit.ContextClassLoaderExtension;
 import java.util.Map;
 import java.util.function.BiFunction;
 import org.apache.logging.log4j.util.StringMap;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-class TomcatContextDataProviderTest extends AbstractClassLoaderTest {
+@ExtendWith(ContextClassLoaderExtension.class)
+class TomcatContextDataProviderTest {
 
     @Test
     void supplyContextData() {
