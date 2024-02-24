@@ -18,6 +18,7 @@ package eu.copernik.log4j.tomcat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
@@ -61,7 +62,7 @@ class Log4jWebappClassLoaderTest {
     private static final String LOG4J_API_LINK = "org.apache.logging.log4j.api.link";
     private static final String LOG4J_CORE_LINK = "org.apache.logging.log4j.core.link";
 
-    private URL findJar(final String link) throws IOException {
+    private static URL findJar(final String link) throws IOException {
         final ClassLoader cl = Log4jWebappClassLoaderTest.class.getClassLoader();
         try (final InputStream is = cl.getResourceAsStream(link);
                 final Reader reader = new InputStreamReader(is, StandardCharsets.US_ASCII)) {
@@ -69,14 +70,26 @@ class Log4jWebappClassLoaderTest {
         }
     }
 
-    private <T extends WebappClassLoaderBase> T createClassLoader(final Class<T> clazz, final ClassLoader parent) {
-        try {
+    private static WebResourceRoot createResources() {
+        return assertDoesNotThrow(() -> {
             final WebResourceRoot resources = new StandardRoot(mock(Context.class));
             resources.createWebResourceSet(
                     ResourceSetType.CLASSES_JAR, "/WEB-INF/classes", findJar(LOG4J_API_LINK), "/");
             resources.createWebResourceSet(
                     ResourceSetType.CLASSES_JAR, "/WEB-INF/classes", findJar(LOG4J_CORE_LINK), "/");
             resources.start();
+            return resources;
+        });
+    }
+
+    private static <T extends WebappClassLoaderBase> T createClassLoader(
+            final Class<T> clazz, final ClassLoader parent) {
+        return createClassLoader(clazz, parent, createResources());
+    }
+
+    private static <T extends WebappClassLoaderBase> T createClassLoader(
+            final Class<T> clazz, final ClassLoader parent, final WebResourceRoot resources) {
+        try {
             final T cl;
             if (parent != null) {
                 final Constructor<T> constructor = clazz.getConstructor(ClassLoader.class);
@@ -88,7 +101,7 @@ class Log4jWebappClassLoaderTest {
             cl.setResources(resources);
             cl.start();
             return cl;
-        } catch (ReflectiveOperationException | LifecycleException | IOException e) {
+        } catch (final ReflectiveOperationException | LifecycleException e) {
             fail("Unable to instantiate classloader.", e);
         }
         // never reached
@@ -112,7 +125,7 @@ class Log4jWebappClassLoaderTest {
     @RepeatedTest(100)
     void testStandardClassloader() throws IOException {
         try (final URLClassLoader cl =
-                createClassLoader(WebappClassLoader.class, getClass().getClassLoader()); ) {
+                createClassLoader(WebappClassLoader.class, getClass().getClassLoader())) {
             classes().forEach(arg -> assertLoadsCorrectClass((Class<?>) arg.get()[0], (boolean) arg.get()[2], cl));
         }
     }
@@ -120,7 +133,7 @@ class Log4jWebappClassLoaderTest {
     @RepeatedTest(100)
     void testLog4jClassloader() throws IOException {
         try (final URLClassLoader cl =
-                createClassLoader(Log4jWebappClassLoader.class, getClass().getClassLoader()); ) {
+                createClassLoader(Log4jWebappClassLoader.class, getClass().getClassLoader())) {
             classes().forEach(arg -> assertLoadsCorrectClass((Class<?>) arg.get()[0], (boolean) arg.get()[1], cl));
         }
     }
@@ -128,21 +141,21 @@ class Log4jWebappClassLoaderTest {
     @RepeatedTest(100)
     void testParallelLog4jClassloader() throws IOException {
         try (final URLClassLoader cl = createClassLoader(
-                Log4jParallelWebappClassLoader.class, getClass().getClassLoader()); ) {
+                Log4jParallelWebappClassLoader.class, getClass().getClassLoader())) {
             classes().forEach(arg -> assertLoadsCorrectClass((Class<?>) arg.get()[0], (boolean) arg.get()[1], cl));
         }
     }
 
     @Test
     void testLog4jClassloaderNoParent() throws IOException {
-        try (final URLClassLoader cl = createClassLoader(Log4jWebappClassLoader.class, null); ) {
+        try (final URLClassLoader cl = createClassLoader(Log4jWebappClassLoader.class, null)) {
             classes().forEach(arg -> assertLoadsCorrectClass((Class<?>) arg.get()[0], (boolean) arg.get()[1], cl));
         }
     }
 
     @Test
     void testParallelLog4jClassloaderNoParent() throws IOException {
-        try (final URLClassLoader cl = createClassLoader(Log4jParallelWebappClassLoader.class, null); ) {
+        try (final URLClassLoader cl = createClassLoader(Log4jParallelWebappClassLoader.class, null)) {
             classes().forEach(arg -> assertLoadsCorrectClass((Class<?>) arg.get()[0], (boolean) arg.get()[1], cl));
         }
     }
@@ -169,13 +182,18 @@ class Log4jWebappClassLoaderTest {
     @ParameterizedTest
     @MethodSource
     void testCopyWithoutTransformers(final Class<? extends WebappClassLoaderBase> loaderClass) throws IOException {
-        try (final WebappClassLoaderBase cl =
-                createClassLoader(loaderClass, getClass().getClassLoader()); ) {
+        final WebResourceRoot resources = createResources();
+        try (final WebappClassLoaderBase loader =
+                createClassLoader(loaderClass, getClass().getClassLoader(), resources)) {
             final ClassFileTransformer transformer = mock(ClassFileTransformer.class);
-            cl.addTransformer(transformer);
-            assertThat(cl.toString()).contains("Class file transformers");
-            final ClassLoader copy = cl.copyWithoutTransformers();
+            loader.addTransformer(transformer);
+            assertThat(loader.toString()).contains("Class file transformers");
+            // First copy
+            final ClassLoader copy = loader.copyWithoutTransformers();
             assertThat(copy.toString()).doesNotContain("Class file transformers");
+            // IllegalStateException if the classloader is closed
+            assertDoesNotThrow(resources::stop);
+            assertThrows(IllegalStateException.class, loader::copyWithoutTransformers);
         }
     }
 }

@@ -17,30 +17,27 @@ package eu.copernik.log4j.tomcat;
 
 final class ClassLoaderUtil {
 
+    static final int PREFIX_LENGTH = 25;
+
     private ClassLoaderUtil() {}
 
     static boolean isLog4jApiResource(final String name, final boolean isClassName) {
-        if (isClassName && name.startsWith("org.apache.logging.log4j.")) {
-            if (name.indexOf('.', 25) == -1
-                    || name.startsWith("internal.", 25)
-                    || name.startsWith("message.", 25)
-                    || name.startsWith("simple.", 25)
-                    || name.startsWith("spi.", 25)
-                    || name.startsWith("status.", 25)
-                    || name.startsWith("util.", 25)) {
-                return true;
-            }
-        } else if (!isClassName && name.startsWith("org/apache/logging/log4j/")) {
-            if (name.indexOf('/', 25) == -1
-                    || name.startsWith("internal/", 25)
-                    || name.startsWith("message/", 25)
-                    || name.startsWith("simple/", 25)
-                    || name.startsWith("spi/", 25)
-                    || name.startsWith("status/", 25)
-                    || name.startsWith("util/", 25)) {
-                return true;
-            }
-        }
-        return false;
+        return isClassName
+                ? name.startsWith("org.apache.logging.log4j.")
+                        && (name.indexOf('.', PREFIX_LENGTH) == -1
+                                || name.startsWith("internal.", PREFIX_LENGTH)
+                                || name.startsWith("message.", PREFIX_LENGTH)
+                                || name.startsWith("simple.", PREFIX_LENGTH)
+                                || name.startsWith("spi.", PREFIX_LENGTH)
+                                || name.startsWith("status.", PREFIX_LENGTH)
+                                || name.startsWith("util.", PREFIX_LENGTH))
+                : name.startsWith("org/apache/logging/log4j/")
+                        && (name.indexOf('/', PREFIX_LENGTH) == -1
+                                || name.startsWith("internal/", PREFIX_LENGTH)
+                                || name.startsWith("message/", PREFIX_LENGTH)
+                                || name.startsWith("simple/", PREFIX_LENGTH)
+                                || name.startsWith("spi/", PREFIX_LENGTH)
+                                || name.startsWith("status/", PREFIX_LENGTH)
+                                || name.startsWith("util/", PREFIX_LENGTH));
     }
 }

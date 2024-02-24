@@ -15,7 +15,11 @@
  */
 package eu.copernik.log4j.tomcat;
 
+import static eu.copernik.log4j.tomcat.ClassLoaderUtil.PREFIX_LENGTH;
+import static eu.copernik.log4j.tomcat.ClassLoaderUtil.isLog4jApiResource;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.util.Objects;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.loader.WebappClassLoader;
 
@@ -50,13 +54,10 @@ public class Log4jWebappClassLoader extends WebappClassLoader {
 
     @Override
     protected boolean filter(final String name, final boolean isClassName) {
-        if (name == null || name.length() < 25) {
-            return super.filter(name, isClassName);
-        }
-        if (ClassLoaderUtil.isLog4jApiResource(name, isClassName)) {
-            return true;
-        }
-        return super.filter(name, isClassName);
+        Objects.requireNonNull(name);
+        return name.length() < PREFIX_LENGTH
+                ? super.filter(name, isClassName)
+                : isLog4jApiResource(name, isClassName) || super.filter(name, isClassName);
     }
 
     @Override
