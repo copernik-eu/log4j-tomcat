@@ -15,28 +15,48 @@
  */
 package eu.copernik.log4j.tomcat.juli.core;
 
+import static eu.copernik.log4j.tomcat.juli.core.GlobalTomcatContextSelectorTest.checkContextMethods;
+import static eu.copernik.log4j.tomcat.juli.core.GlobalTomcatContextSelectorTest.checkShutdown;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.async.AsyncLogger;
-import org.apache.logging.log4j.core.selector.ContextSelector;
+import org.apache.logging.log4j.core.async.AsyncLoggerContext;
+import org.apache.logging.log4j.core.impl.ContextAnchor;
 import org.junit.jupiter.api.Test;
 
 class TomcatContextSelectorTest extends AbstractClassLoaderTest {
 
     @Test
-    void contextSelector() {
-        final ContextSelector selector = new TomcatContextSelector();
+    void contextSelector() throws Exception {
+        final TomcatContextSelector selector = new TomcatContextSelector();
         final LoggerContext context = selector.getContext(null, null, false);
+        assertThat(context).isExactlyInstanceOf(LoggerContext.class);
+        final LoggerContext currentContext = new LoggerContext("current");
+        ContextAnchor.THREAD_CONTEXT.set(currentContext);
         assertThat(context.getName()).isEqualTo("/" + ENGINE_NAME + "/" + HOST_NAME + "/" + CONTEXT_NAME);
+        // Caused both contexts to be removed
+        checkContextMethods(selector, context, currentContext);
+        // Checks shutdown of new context
+        checkShutdown(selector, context);
     }
 
     @Test
-    void asyncContextSelector() {
-        final ContextSelector selector = new TomcatAsyncContextSelector();
+    void asyncContextSelector() throws Exception {
+        final TomcatAsyncContextSelector selector = new TomcatAsyncContextSelector();
         final LoggerContext context = selector.getContext(null, null, false);
+        assertThat(context).isExactlyInstanceOf(AsyncLoggerContext.class);
+        final LoggerContext currentContext = new LoggerContext("current");
+        ContextAnchor.THREAD_CONTEXT.set(currentContext);
         assertThat(context.getName()).isEqualTo("/" + ENGINE_NAME + "/" + HOST_NAME + "/" + CONTEXT_NAME);
-        assertThat(context.getLogger(LogManager.ROOT_LOGGER_NAME)).isInstanceOf(AsyncLogger.class);
+        // Caused both contexts to be removed
+        checkContextMethods(selector, context, currentContext);
+        // Checks shutdown of new context
+        checkShutdown(selector, context);
+    }
+
+    @Test
+    void isNotClassLoaderDependent() {
+        assertThat(new TomcatContextSelector().isClassLoaderDependent()).isFalse();
+        assertThat(new TomcatAsyncContextSelector().isClassLoaderDependent()).isFalse();
     }
 }

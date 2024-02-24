@@ -49,11 +49,7 @@ public class TomcatContextSelector implements ContextSelector, LoggerContextShut
         if (tccl instanceof WebappProperties) {
             final String name = getContextName((WebappProperties) tccl);
             final AtomicReference<WeakReference<LoggerContext>> ref = CONTEXT_MAP.get(name);
-            if (ref == null) {
-                return false;
-            }
-            final WeakReference<LoggerContext> weakRef = ref.get();
-            return weakRef != null && weakRef.get() != null;
+            return ref != null && ref.get().get() != null;
         }
         return GLOBAL_CONTEXT.get() != null;
     }
@@ -85,29 +81,34 @@ public class TomcatContextSelector implements ContextSelector, LoggerContextShut
             final Entry<String, Object> entry,
             final boolean currentContext,
             final URI configLocation) {
+        LoggerContext ctx = null;
         if (currentContext) {
-            final LoggerContext ctx = ContextAnchor.THREAD_CONTEXT.get();
-            if (ctx != null) {
-                return ctx;
-            }
+            ctx = ContextAnchor.THREAD_CONTEXT.get();
         }
-        final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-        final LoggerContext ctx;
-        if (tccl instanceof WebappProperties) {
-            final String name = getContextName((WebappProperties) tccl);
-            final AtomicReference<WeakReference<LoggerContext>> ref =
-                    CONTEXT_MAP.computeIfAbsent(name, ignored -> new AtomicReference<>());
-            final WeakReference<LoggerContext> weakRef = ref.get();
-            final LoggerContext oldCtx = weakRef != null ? weakRef.get() : null;
-            if (oldCtx != null) {
-                ctx = oldCtx;
+        if (ctx == null) {
+            final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+            if (tccl instanceof WebappProperties) {
+                final String name = getContextName((WebappProperties) tccl);
+                final AtomicReference<WeakReference<LoggerContext>> ref =
+                        CONTEXT_MAP.computeIfAbsent(name, ignored -> new AtomicReference<>(new WeakReference<>(null)));
+                final WeakReference<LoggerContext> weakRef = ref.get();
+                final LoggerContext oldCtx = weakRef.get();
+                if (oldCtx != null) {
+                    ctx = oldCtx;
+                } else {
+                    ctx = createContext(name, configLocation);
+                    ref.compareAndSet(weakRef, new WeakReference<>(ctx));
+                }
             } else {
-                ctx = createContext(name, configLocation);
-                ref.compareAndSet(weakRef, new WeakReference<>(ctx));
+                ctx = getGlobal();
             }
-        } else {
-            ctx = getGlobal();
         }
+        setEntry(ctx, entry);
+        setConfigLocation(ctx, configLocation);
+        return ctx;
+    }
+
+    private static void setEntry(final LoggerContext ctx, final Entry<String, Object> entry) {
         if (entry != null) {
             final String key = entry.getKey();
             if (ctx.getObject(entry.getKey()) == null) {
@@ -121,6 +122,9 @@ public class TomcatContextSelector implements ContextSelector, LoggerContextShut
                         entry.getValue());
             }
         }
+    }
+
+    private static void setConfigLocation(final LoggerContext ctx, final URI configLocation) {
         if (ctx.getConfigLocation() == null && configLocation != null) {
             LOGGER.debug("Setting configuration to {}.", configLocation);
             ctx.setConfigLocation(configLocation);
@@ -132,15 +136,13 @@ public class TomcatContextSelector implements ContextSelector, LoggerContextShut
                     ctx.getConfigLocation(),
                     configLocation);
         }
-        return ctx;
     }
 
     @Override
     public List<LoggerContext> getLoggerContexts() {
         final List<LoggerContext> loggerContexts = new ArrayList<>(CONTEXT_MAP.size() + 1);
         CONTEXT_MAP.values().forEach(ref -> {
-            final WeakReference<LoggerContext> weakRef = ref.get();
-            final LoggerContext ctx = weakRef != null ? weakRef.get() : null;
+            final LoggerContext ctx = ref.get().get();
             if (ctx != null) {
                 loggerContexts.add(ctx);
             }
@@ -185,7 +187,7 @@ public class TomcatContextSelector implements ContextSelector, LoggerContextShut
     @Override
     public void contextShutdown(final org.apache.logging.log4j.spi.LoggerContext loggerContext) {
         if (loggerContext instanceof LoggerContext) {
-            CONTEXT_MAP.remove(((LoggerContext) loggerContext).getName());
+            removeContext((LoggerContext) loggerContext);
         }
     }
 }
