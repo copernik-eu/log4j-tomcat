@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/copernik-eu/log4j-plugins/graph/badge.svg?token=CTUJTRHWXR)](https://codecov.io/gh/copernik-eu/log4j-plugins)
+
 # Copernik.eu Log4j2 plugins
 
 Copernik.eu Log4j2 plugins is a loose set of plugins for the Log4j2 Core logging system.
