@@ -112,13 +112,14 @@ public class TomcatContextSelector implements ContextSelector, LoggerContextShut
             final org.apache.logging.log4j.spi.LoggerContext ctx, final Entry<String, Object> entry) {
         if (entry != null) {
             final String key = entry.getKey();
-            if (ctx.getObject(entry.getKey()) == null) {
+            final Object object = ctx.getObject(key);
+            if (object == null) {
                 LOGGER.debug("Setting logger context key {} to {}.", entry.getKey(), entry.getValue());
                 ctx.putObject(entry.getKey(), entry.getValue());
-            } else if (!ctx.getObject(key).equals(entry.getValue())) {
+            } else if (!object.equals(entry.getValue())) {
                 LOGGER.warn(
                         "Existing logger context has {} associated to the key {}. Can not change it to {}.",
-                        ctx.getObject(key),
+                        object,
                         key,
                         entry.getValue());
             }

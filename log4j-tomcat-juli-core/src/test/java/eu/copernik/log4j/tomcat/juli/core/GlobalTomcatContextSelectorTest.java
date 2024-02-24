@@ -21,38 +21,34 @@ import java.net.URI;
 import java.net.URL;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
+import java.util.stream.Stream;
 import org.apache.logging.log4j.core.LifeCycle.State;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.async.AsyncLoggerContext;
 import org.apache.logging.log4j.core.impl.ContextAnchor;
 import org.apache.logging.log4j.core.selector.ContextSelector;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class GlobalTomcatContextSelectorTest {
+
+    static Stream<Arguments> selectors() {
+        return Stream.of(
+                Arguments.of(new TomcatContextSelector(), LoggerContext.class),
+                Arguments.of(new TomcatAsyncContextSelector(), AsyncLoggerContext.class));
+    }
 
     private static final URL CONFIG = GlobalTomcatContextSelectorTest.class.getResource("/dummy-log4j2.test");
     private static final URL CONFIG2 = GlobalTomcatContextSelectorTest.class.getResource("/dummy2-log4j2.test");
 
-    @Test
-    void contextSelector() throws Exception {
-        final TomcatContextSelector selector = new TomcatContextSelector();
+    @ParameterizedTest
+    @MethodSource("selectors")
+    void allMethods(final ContextSelector selector, final Class<? extends LoggerContext> contextClass)
+            throws Exception {
         final LoggerContext context = selector.getContext(null, null, false);
-        assertThat(context).isExactlyInstanceOf(LoggerContext.class);
+        assertThat(context).isExactlyInstanceOf(contextClass);
         final LoggerContext currentContext = new LoggerContext("current");
-        ContextAnchor.THREAD_CONTEXT.set(currentContext);
-        assertThat(context.getName()).isEqualTo("-tomcat");
-        // Caused both contexts to be removed
-        checkContextMethods(selector, context, currentContext);
-        // Checks shutdown of new context
-        checkShutdown(selector, context);
-    }
-
-    @Test
-    void asyncContextSelector() throws Exception {
-        final TomcatAsyncContextSelector selector = new TomcatAsyncContextSelector();
-        final LoggerContext context = selector.getContext(null, null, false);
-        assertThat(context).isExactlyInstanceOf(AsyncLoggerContext.class);
-        final LoggerContext currentContext = new AsyncLoggerContext("current");
         ContextAnchor.THREAD_CONTEXT.set(currentContext);
         assertThat(context.getName()).isEqualTo("-tomcat");
         // Caused both contexts to be removed
@@ -109,7 +105,8 @@ class GlobalTomcatContextSelectorTest {
         assertThat(currentContext.getConfigLocation()).isEqualTo(configLocation);
         assertThat(currentContext.getState()).isEqualTo(State.INITIALIZED);
 
-        // Provide an external context (deprecated?)
+        // Provide an external context (deprecated?) twice
+        // TODO: check status logger
         final Object object = new Object();
         final Entry<String, Object> entry = new SimpleEntry<>("object", object);
 
@@ -117,8 +114,13 @@ class GlobalTomcatContextSelectorTest {
         assertThat(selector.getContext(null, null, entry, false, configLocation))
                 .isEqualTo(context);
         assertThat(context.getObject("object")).isEqualTo(object);
+        assertThat(selector.getContext(null, null, entry, false, configLocation))
+                .isEqualTo(context);
+        assertThat(context.getObject("object")).isEqualTo(object);
 
         assertThat(currentContext.getObject("object")).isNull();
+        assertThat(selector.getContext(null, null, entry, true, configLocation)).isEqualTo(currentContext);
+        assertThat(currentContext.getObject("object")).isEqualTo(object);
         assertThat(selector.getContext(null, null, entry, true, configLocation)).isEqualTo(currentContext);
         assertThat(currentContext.getObject("object")).isEqualTo(object);
 
