@@ -15,7 +15,9 @@
  */
 package eu.copernik.log4j.tomcat;
 
-class ClassLoaderUtil {
+final class ClassLoaderUtil {
+
+    private ClassLoaderUtil() {}
 
     static boolean isLog4jApiResource(final String name, final boolean isClassName) {
         if (isClassName && name.startsWith("org.apache.logging.log4j.")) {

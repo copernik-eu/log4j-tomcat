@@ -29,6 +29,7 @@ import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.stream.Stream;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
@@ -48,6 +49,7 @@ import org.apache.logging.log4j.status.StatusListener;
 import org.apache.logging.log4j.util.PropertiesUtil;
 import org.junit.jupiter.api.MethodOrderer.Random;
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -67,7 +69,7 @@ class Log4jWebappClassLoaderTest {
         }
     }
 
-    private <T extends WebappClassLoaderBase> T createClassLoader(final Class<T> clazz) {
+    private <T extends WebappClassLoaderBase> T createClassLoader(final Class<T> clazz, final ClassLoader parent) {
         try {
             final WebResourceRoot resources = new StandardRoot(mock(Context.class));
             resources.createWebResourceSet(
@@ -75,8 +77,14 @@ class Log4jWebappClassLoaderTest {
             resources.createWebResourceSet(
                     ResourceSetType.CLASSES_JAR, "/WEB-INF/classes", findJar(LOG4J_CORE_LINK), "/");
             resources.start();
-            final Constructor<T> constructor = clazz.getConstructor(ClassLoader.class);
-            final T cl = constructor.newInstance(Log4jWebappClassLoaderTest.class.getClassLoader());
+            final T cl;
+            if (parent != null) {
+                final Constructor<T> constructor = clazz.getConstructor(ClassLoader.class);
+                cl = constructor.newInstance(parent);
+            } else {
+                final Constructor<T> constructor = clazz.getConstructor();
+                cl = constructor.newInstance();
+            }
             cl.setResources(resources);
             cl.start();
             return cl;
@@ -96,30 +104,45 @@ class Log4jWebappClassLoaderTest {
                 Arguments.of(LoggerContext.class, true, false),
                 Arguments.of(StatusListener.class, true, false),
                 Arguments.of(PropertiesUtil.class, true, false),
-                // TODO: loading LoggerContext fails
-                // Arguments.of(org.apache.logging.log4j.core.LoggerContext.class, false,
-                // false),
-                Arguments.of(Configuration.class, false, false));
-        // Arguments.of(TomcatLookup.class, true, true));
+                // Log4j Core is not delegated to parent
+                Arguments.of(Configuration.class, false, false),
+                Arguments.of(Map.class, true, true));
     }
 
     @RepeatedTest(100)
     void testStandardClassloader() throws IOException {
-        try (final URLClassLoader cl = createClassLoader(WebappClassLoader.class); ) {
+        try (final URLClassLoader cl =
+                createClassLoader(WebappClassLoader.class, getClass().getClassLoader()); ) {
             classes().forEach(arg -> assertLoadsCorrectClass((Class<?>) arg.get()[0], (boolean) arg.get()[2], cl));
         }
     }
 
     @RepeatedTest(100)
     void testLog4jClassloader() throws IOException {
-        try (final URLClassLoader cl = createClassLoader(Log4jWebappClassLoader.class); ) {
+        try (final URLClassLoader cl =
+                createClassLoader(Log4jWebappClassLoader.class, getClass().getClassLoader()); ) {
             classes().forEach(arg -> assertLoadsCorrectClass((Class<?>) arg.get()[0], (boolean) arg.get()[1], cl));
         }
     }
 
     @RepeatedTest(100)
     void testParallelLog4jClassloader() throws IOException {
-        try (final URLClassLoader cl = createClassLoader(Log4jParallelWebappClassLoader.class); ) {
+        try (final URLClassLoader cl = createClassLoader(
+                Log4jParallelWebappClassLoader.class, getClass().getClassLoader()); ) {
+            classes().forEach(arg -> assertLoadsCorrectClass((Class<?>) arg.get()[0], (boolean) arg.get()[1], cl));
+        }
+    }
+
+    @Test
+    void testLog4jClassloaderNoParent() throws IOException {
+        try (final URLClassLoader cl = createClassLoader(Log4jWebappClassLoader.class, null); ) {
+            classes().forEach(arg -> assertLoadsCorrectClass((Class<?>) arg.get()[0], (boolean) arg.get()[1], cl));
+        }
+    }
+
+    @Test
+    void testParallelLog4jClassloaderNoParent() throws IOException {
+        try (final URLClassLoader cl = createClassLoader(Log4jParallelWebappClassLoader.class, null); ) {
             classes().forEach(arg -> assertLoadsCorrectClass((Class<?>) arg.get()[0], (boolean) arg.get()[1], cl));
         }
     }
@@ -146,7 +169,8 @@ class Log4jWebappClassLoaderTest {
     @ParameterizedTest
     @MethodSource
     void testCopyWithoutTransformers(final Class<? extends WebappClassLoaderBase> loaderClass) throws IOException {
-        try (final WebappClassLoaderBase cl = createClassLoader(loaderClass); ) {
+        try (final WebappClassLoaderBase cl =
+                createClassLoader(loaderClass, getClass().getClassLoader()); ) {
             final ClassFileTransformer transformer = mock(ClassFileTransformer.class);
             cl.addTransformer(transformer);
             assertThat(cl.toString()).contains("Class file transformers");

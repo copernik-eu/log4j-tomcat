@@ -44,12 +44,12 @@ public class Log4jWebappClassLoader extends WebappClassLoader {
         super();
     }
 
-    public Log4jWebappClassLoader(ClassLoader parent) {
+    public Log4jWebappClassLoader(final ClassLoader parent) {
         super(parent);
     }
 
     @Override
-    protected boolean filter(String name, boolean isClassName) {
+    protected boolean filter(final String name, final boolean isClassName) {
         if (name == null || name.length() < 25) {
             return super.filter(name, isClassName);
         }
@@ -63,13 +63,13 @@ public class Log4jWebappClassLoader extends WebappClassLoader {
     @SuppressFBWarnings("DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED")
     public Log4jWebappClassLoader copyWithoutTransformers() {
 
-        Log4jWebappClassLoader result = new Log4jWebappClassLoader(getParent());
+        final Log4jWebappClassLoader result = new Log4jWebappClassLoader(getParent());
 
         super.copyStateWithoutTransformers(result);
 
         try {
             result.start();
-        } catch (LifecycleException e) {
+        } catch (final LifecycleException e) {
             throw new IllegalStateException(e);
         }
 
