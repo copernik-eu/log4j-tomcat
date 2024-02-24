@@ -108,7 +108,8 @@ public class TomcatContextSelector implements ContextSelector, LoggerContextShut
         return ctx;
     }
 
-    private static void setEntry(final LoggerContext ctx, final Entry<String, Object> entry) {
+    private static void setEntry(
+            final org.apache.logging.log4j.spi.LoggerContext ctx, final Entry<String, Object> entry) {
         if (entry != null) {
             final String key = entry.getKey();
             if (ctx.getObject(entry.getKey()) == null) {
