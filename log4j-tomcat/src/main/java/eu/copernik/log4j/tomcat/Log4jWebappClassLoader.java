@@ -55,6 +55,7 @@ public class Log4jWebappClassLoader extends WebappClassLoader {
     @Override
     protected boolean filter(final String name, final boolean isClassName) {
         Objects.requireNonNull(name);
+        // Optimization: names shorter than PREFIX_LENGTH are not in Log4j API
         return name.length() < PREFIX_LENGTH
                 ? super.filter(name, isClassName)
                 : isLog4jApiResource(name, isClassName) || super.filter(name, isClassName);
@@ -71,6 +72,7 @@ public class Log4jWebappClassLoader extends WebappClassLoader {
         try {
             result.start();
         } catch (final LifecycleException e) {
+            // Currently unreachable
             throw new IllegalStateException(e);
         }
 

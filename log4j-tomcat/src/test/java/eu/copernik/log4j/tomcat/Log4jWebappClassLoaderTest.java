@@ -18,7 +18,6 @@ package eu.copernik.log4j.tomcat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
@@ -119,7 +118,10 @@ class Log4jWebappClassLoaderTest {
                 Arguments.of(PropertiesUtil.class, true, false),
                 // Log4j Core is not delegated to parent
                 Arguments.of(Configuration.class, false, false),
-                Arguments.of(Map.class, true, true));
+                // Class name under 25 characters (the prefix of all Log4j API classes)
+                Arguments.of(Map.class, true, true),
+                // Class name over 25 characters
+                Arguments.of(WebResourceRoot.class, true, true));
     }
 
     @RepeatedTest(100)
@@ -182,18 +184,14 @@ class Log4jWebappClassLoaderTest {
     @ParameterizedTest
     @MethodSource
     void testCopyWithoutTransformers(final Class<? extends WebappClassLoaderBase> loaderClass) throws IOException {
-        final WebResourceRoot resources = createResources();
         try (final WebappClassLoaderBase loader =
-                createClassLoader(loaderClass, getClass().getClassLoader(), resources)) {
+                createClassLoader(loaderClass, getClass().getClassLoader(), createResources())) {
             final ClassFileTransformer transformer = mock(ClassFileTransformer.class);
             loader.addTransformer(transformer);
             assertThat(loader.toString()).contains("Class file transformers");
-            // First copy
+            // Successful copy
             final ClassLoader copy = loader.copyWithoutTransformers();
             assertThat(copy.toString()).doesNotContain("Class file transformers");
-            // IllegalStateException if the classloader is closed
-            assertDoesNotThrow(resources::stop);
-            assertThrows(IllegalStateException.class, loader::copyWithoutTransformers);
         }
     }
 }
