@@ -18,12 +18,18 @@ package eu.copernik.log4j.tomcat.juli;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
+import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.filter.AbstractFilter;
 import org.apache.logging.log4j.core.test.appender.ListAppender;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +42,7 @@ class Log4jLogTest {
     void location() {
         final Log log = LogFactory.getLog("location");
         int i = 0;
-        int currentLine = 39;
+        int currentLine = 45;
         log.trace(MESSAGE + i++);
         log.trace(MESSAGE + i++, T);
         log.debug(MESSAGE + i++);
@@ -79,5 +85,41 @@ class Log4jLogTest {
         assertThat(location.getClassName()).isEqualTo(Log4jLogTest.class.getName());
         assertThat(location.getMethodName()).isEqualTo("location");
         assertThat(location.getLineNumber()).isEqualTo(lineNumber);
+    }
+
+    @Test
+    void checkFiltering() {
+        final Configuration configuration = LoggerContext.getContext(false).getConfiguration();
+        final Marker expectedMarker = MarkerManager.getMarker("TOMCAT");
+        final AtomicReference<Level> expectedLevel = new AtomicReference<>();
+        final Filter filter = new AbstractFilter() {
+            @Override
+            public Result filter(
+                    final Logger logger,
+                    final Level level,
+                    final Marker marker,
+                    final Object object,
+                    final Throwable throwable) {
+                return expectedMarker.equals(marker) && level.equals(expectedLevel.get()) ? Result.ACCEPT : Result.DENY;
+            }
+        };
+        configuration.addFilter(filter);
+        try {
+            final Log log = LogFactory.getLog("levels");
+            expectedLevel.set(Level.DEBUG);
+            assertThat(log.isDebugEnabled()).isTrue();
+            expectedLevel.set(Level.ERROR);
+            assertThat(log.isErrorEnabled()).isTrue();
+            expectedLevel.set(Level.FATAL);
+            assertThat(log.isFatalEnabled()).isTrue();
+            expectedLevel.set(Level.INFO);
+            assertThat(log.isInfoEnabled()).isTrue();
+            expectedLevel.set(Level.TRACE);
+            assertThat(log.isTraceEnabled()).isTrue();
+            expectedLevel.set(Level.WARN);
+            assertThat(log.isWarnEnabled()).isTrue();
+        } finally {
+            configuration.removeFilter(filter);
+        }
     }
 }

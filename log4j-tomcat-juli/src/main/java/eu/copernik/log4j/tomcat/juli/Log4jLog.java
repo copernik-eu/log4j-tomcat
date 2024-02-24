@@ -58,7 +58,7 @@ public class Log4jLog implements Log {
 
     @Override
     public boolean isErrorEnabled() {
-        return logger.isDebugEnabled(TOMCAT_MARKER);
+        return logger.isErrorEnabled(TOMCAT_MARKER);
     }
 
     @Override
