@@ -15,6 +15,9 @@
  */
 package eu.copernik.log4j.tomcat;
 
+import org.apache.catalina.Lifecycle;
+import org.apache.catalina.LifecycleException;
+
 final class ClassLoaderUtil {
 
     static final int PREFIX_LENGTH = 25;
@@ -39,5 +42,13 @@ final class ClassLoaderUtil {
                                 || name.startsWith("spi/", PREFIX_LENGTH)
                                 || name.startsWith("status/", PREFIX_LENGTH)
                                 || name.startsWith("util/", PREFIX_LENGTH));
+    }
+
+    static void startUnchecked(final Lifecycle lifecycle) {
+        try {
+            lifecycle.start();
+        } catch (final LifecycleException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }

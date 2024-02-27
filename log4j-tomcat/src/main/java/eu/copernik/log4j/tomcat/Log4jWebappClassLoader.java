@@ -17,10 +17,10 @@ package eu.copernik.log4j.tomcat;
 
 import static eu.copernik.log4j.tomcat.ClassLoaderUtil.PREFIX_LENGTH;
 import static eu.copernik.log4j.tomcat.ClassLoaderUtil.isLog4jApiResource;
+import static eu.copernik.log4j.tomcat.ClassLoaderUtil.startUnchecked;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Objects;
-import org.apache.catalina.LifecycleException;
 import org.apache.catalina.loader.WebappClassLoader;
 
 /**
@@ -64,18 +64,9 @@ public class Log4jWebappClassLoader extends WebappClassLoader {
     @Override
     @SuppressFBWarnings("DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED")
     public Log4jWebappClassLoader copyWithoutTransformers() {
-
         final Log4jWebappClassLoader result = new Log4jWebappClassLoader(getParent());
-
         super.copyStateWithoutTransformers(result);
-
-        try {
-            result.start();
-        } catch (final LifecycleException e) {
-            // Currently unreachable
-            throw new IllegalStateException(e);
-        }
-
+        startUnchecked(result);
         return result;
     }
 }
