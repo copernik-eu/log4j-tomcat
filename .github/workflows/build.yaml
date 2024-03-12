@@ -27,6 +27,6 @@ jobs:
 
   build:
     if: github.actor != 'dependabot[bot]'
-    uses: copernik-eu/log4j-plugins/.github/workflows/build-reusable.yaml@main
+    uses: copernik-eu/log4j-tomcat/.github/workflows/build-reusable.yaml@main
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

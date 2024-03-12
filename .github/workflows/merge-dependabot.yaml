@@ -23,8 +23,8 @@ permissions: read-all
 jobs:
 
   build:
-    if: github.repository == 'copernik-eu/log4j-plugins' && github.actor == 'dependabot[bot]'
-    uses: copernik-eu/log4j-plugins/.github/workflows/build-reusable.yaml@main
+    if: github.repository == 'copernik-eu/log4j-tomcat' && github.actor == 'dependabot[bot]'
+    uses: copernik-eu/log4j-tomcat/.github/workflows/build-reusable.yaml@main
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
