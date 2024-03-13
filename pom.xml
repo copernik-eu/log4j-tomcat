@@ -144,7 +144,7 @@
     <!-- Maven plugin dependencies -->
     <error_prone.version>2.26.1</error_prone.version>
     <findsecbugs-plugin.version>1.13.0</findsecbugs-plugin.version>
-    <palantir-java-format.version>2.40.0</palantir-java-format.version>
+    <palantir-java-format.version>2.41.0</palantir-java-format.version>
 
     <!-- Maven plugin versions -->
     <apache-rat-plugin.version>0.16.1</apache-rat-plugin.version>
