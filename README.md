@@ -1,4 +1,4 @@
-[![codecov](https://codecov.io/gh/copernik-eu/log4j-plugins/graph/badge.svg?token=CTUJTRHWXR)](https://codecov.io/gh/copernik-eu/log4j-plugins)
+[![codecov](https://codecov.io/gh/copernik-eu/log4j-tomcat/graph/badge.svg?token=CTUJTRHWXR)](https://codecov.io/gh/copernik-eu/log4j-tomcat)
 
 # Copernik.eu Log4j2 plugins
 
