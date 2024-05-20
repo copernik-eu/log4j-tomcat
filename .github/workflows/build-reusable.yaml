@@ -65,7 +65,7 @@ jobs:
             clean install
 
       - name: Upload test coverage
-        uses: codecov/codecov-action@6d798873df2b1b8e5846dba6fb86631229fbcb17 # 4.4.0
+        uses: codecov/codecov-action@125fc84a9a348dbcf27191600683ec096ec9021c # 4.4.1
         with:
           fail_ci_if_error: true
           slug: copernik-eu/log4j-tomcat
