@@ -1,0 +1,273 @@
+////
+// tag::license[]
+//
+// Copyright © 2024 Piotr P. Karwasz
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// end::license[]
+////
+= Logging in Tomcat using Log4j Core
+
+Logging configuration in Java is complex, mostly due to the presence of multiple logging APIs and logging backends, that need to be configured separately.
+
+On a Tomcat server we might find:
+
+* Tomcat's own logging interface, called Tomcat JULI (cf. https://tomcat.apache.org/tomcat-11.0-doc/logging.html[Tomcat's documentation]).
+This logging interface by default binds to `java.util.logging` (JUL).
+* Each application can use its own logging API, and each library can use a different one.
+The most popular are
+https://www.slf4j.org/[SLF4J],
+https://commons.apache.org/proper/commons-logging/index.html[Apache Commons Logging (JCL)],
+https://github.com/jboss-logging/jboss-logging[JBoss Logging],
+https://logging.apache.org/log4j/2.x/manual/api.html[Log4j API]
+and  https://docs.oracle.com/en/java/javase/17/docs/api/java.logging/java/util/logging/package-summary.html[`java.util.logging` (JUL)].
+
+In this guide, we will present a way to bring all these logging APIs together and direct them to use a single instance of
+https://logging.apache.org/log4j/2.x/manual/implementation.html[Log4j Core].
+
+[IMPORTANT]
+====
+We assume that all the web applications running on Tomcat are wired to forward all other logging APIs to Log4j API.
+If that is not the case, see
+https://logging.apache.org/log4j/2.x/manual/installation.html#impl-core-bridges[Installing bridges]
+in Apache Log4j documentation.
+====
+
+[#installation]
+== Installation
+
+To install all Copernik.eu plugins for Tomcat and Log4j:
+
+include::partial$tomcat-dirs.adoc[]
+
+* Download the `copernik-log4j-tomcat-{project-version}.zip` distribution archive available on the
+https://github.com/copernik-eu/log4j-tomcat/releases/tag/v{project-version}[GitHub releases page].
+* Unzip the contents of the `overlay` folder of the archive in the `$CATALINA_BASE` folder of you Tomcat installation.
+* Customize if necessary the `$CATALINA_BASE/bin/setenv-log4j.sh` file and move it to `$CATALINA_BASE/bin/setenv.sh`.
+* Customize if necessary the `$CATALINA_BASE/conf/context-log4j.xml` file and move it to `$CATALINA_BASE/conf/context.xml`.
+
+[#configuration]
+== Configuration
+
+Depending on the flexibility of configuration you want on your Tomcat server:
+
+* You can use separate
+https://logging.apache.org/log4j/2.x/manual/architecture.html#LoggerContext[logging contexts]
+for each application, which allows you to use a separate Log4j Core configuration for each application.
+See <<multiple-contexts>> for more information.
+* You can use a single logger context with a single configuration file.
+See <<one-context>> for more information.
+
+[#multiple-contexts]
+=== Separate logging contexts
+
+To use multiple logging contexts, you need to modify the `conf/logging/log4j2.component.properties` file in `$CATALINA_BASE` and enable one of the
+xref:components/log4j-tomcat.adoc#TomcatContextSelector[Tomcat context selectors]:
+
+.Example `log4j2.component.properties` file
+[source,properties]
+----
+include::example$guide/multiple-contexts.properties[tags=!license]
+----
+
+After the context selector has been enabled, you will be able to add configuration files in the following locations of `$CATALINA_BASE`:
+
+`conf/logging/log4j2-tomcat.<extension>`::
++
+This configuration file, if present, will be used by the Tomcat server itself.
+
+`conf/logging/log4j2/<engine>/<host>/<context>.<extension>`::
++
+This configuration file will be used by the application with **base name** `<context>` in the host `<host>` of Tomcat's `<engine>` engine.
+
+`conf/logging/log4j2.xml`::
++
+This configuration file will be used as a fallback if a more specific configuration file does not exist.
+
+[NOTE]
+====
+Using multiple logger contexts will always correctly separate the logs issued by the web applications themselves.
+
+The logs issued by shared `$CATALINA_BASE/lib` libraries might, however, end up in the global Tomcat logger context if the libraries were not written with log separation in mind.
+As far as we know, Tomcat's libraries behave correctly when used with multiple logger contexts.
+
+See
+https://logging.apache.org/log4j/2.x/jakarta.html#log-separation[Log Separation]
+on Apache Log4j site for more information on the topic.
+====
+
+[#multiple-contexts-examples]
+=== Separate logging contexts examples
+
+[#multiple-contexts-multiple-files]
+==== Multiple files
+
+To separate the logs of each application into their own log file, create a `conf/logging/log4j2.xml` file as the example below:
+
+[tabs]
+====
+XML::
++
+.{examples-url}/guide/multiple-contexts-multiple-files.xml[Example `log4j2.xml` file]
+[source,xml,indent=0]
+----
+include::example$guide/multiple-contexts-multiple-files.xml[tags=!license]
+----
+
+JSON::
++
+.{examples-url}/guide/multiple-contexts-multiple-files.json[Example `log4j2.json` file]
+[source,json,indent=0]
+----
+include::example$guide/multiple-contexts-multiple-files.json[]
+----
+
+YAML::
++
+.{examples-url}/guide/multiple-contexts-multiple-files.yaml[Example `log4j2.yaml` file]
+[source,yaml,indent=0]
+----
+include::example$guide/multiple-contexts-multiple-files.yaml[tags=!license]
+----
+====
+
+[#multiple-contexts-one-file]
+==== Single appender
+
+If you prefer to send all logs to the console, make sure to mark the origin of each log event.
+You can do it with a configuration file like:
+
+[tabs]
+====
+XML::
++
+.{examples-url}/guide/multiple-contexts-one-file.xml[Example `log4j2.xml` file]
+[source,xml,indent=0]
+----
+include::example$guide/multiple-contexts-one-file.xml[tags=!license]
+----
+
+JSON::
++
+.{examples-url}/guide/multiple-contexts-one-file.json[Example `log4j2.json` file]
+[source,json,indent=0]
+----
+include::example$guide/multiple-contexts-one-file.json[]
+----
+
+YAML::
++
+.{examples-url}/guide/multiple-contexts-one-file.yaml[Example `log4j2.yaml` file]
+[source,yaml,indent=0]
+----
+include::example$guide/multiple-contexts-one-file.yaml[tags=!license]
+----
+====
+
+<1> Use the
+xref:components/log4j-tomcat.adoc#TomcatLookup[Tomcat lookup]
+to store the context name as additional `context.name` key in the JSON template.
+
+[#one-context]
+=== Single logging context
+
+To use a single logging context for the entire JVM, switch Log4j Core from its default context selector to either `BasicContextLoggerSelector` or `BasicAsyncContextLoggerSelector` by modifying the `conf/logging/log4j2.component.properties` file:
+
+.Example `log4j2.component.properties` file
+[source,properties]
+----
+include::example$guide/one-context.properties[tags=!license]
+----
+
+[#one-context-examples]
+=== Single logging contexts examples
+
+[#one-context-multiple-files]
+==== Multiple log files
+
+To separate the logs coming from each web application into its own file, you can use the
+https://logging.apache.org/log4j/2.x/manual/appenders/delegating.html#RoutingAppender[Routing Appender]
+as in the example below:
+
+[tabs]
+====
+XML::
++
+.{examples-url}/guide/one-context-multiple-files.xml[Example `log4j2.xml` file]
+[source,xml,indent=0]
+----
+include::example$guide/one-context-multiple-files.xml[tags=!license]
+----
+
+JSON::
++
+.{examples-url}/guide/one-context-multiple-files.json[Example `log4j2.json` file]
+[source,json,indent=0]
+----
+include::example$guide/one-context-multiple-files.json[]
+----
+
+YAML::
++
+.{examples-url}/guide/one-context-multiple-files.yaml[Example `log4j2.yaml` file]
+[source,yaml,indent=0]
+----
+include::example$guide/one-context-multiple-files.yaml[tags=!license]
+----
+====
+
+[#one-context-one-file]
+==== Single appender
+
+If you prefer instead to send all log events to a single appender, make sure to mark each log event with the name of the web application they come from.
+You can do it by enabling the
+xref:components/log4j-tomcat.adoc#TomcatContextDataProvider[Tomcat context data provider].
+You can do it by modifying your `conf/logging/log4j2.component.properties` to look like:
+
+.Example `log4j2.component.properties` file
+[source,properties]
+----
+include::example$guide/one-context.properties[tags=!license]
+
+include::example$guide/enable-context-data.properties[tags=!license]
+----
+
+Once the context data provider is enabled, you can use a configuration file like this:
+
+[tabs]
+====
+XML::
++
+.{examples-url}/guide/one-context-one-file.xml[Example `log4j2.xml` file]
+[source,xml,indent=0]
+----
+include::example$guide/one-context-one-file.xml[tags=!license]
+----
+
+JSON::
++
+.{examples-url}/guide/one-context-one-file.json[Example `log4j2.json` file]
+[source,json,indent=0]
+----
+include::example$guide/one-context-one-file.json[]
+----
+
+YAML::
++
+.{examples-url}/guide/one-context-one-file.yaml[Example `log4j2.yaml` file]
+[source,yaml,indent=0]
+----
+include::example$guide/one-context-one-file.yaml[tags=!license]
+----
+====

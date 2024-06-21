@@ -24,45 +24,64 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.apache.juli.WebappProperties;
 import org.apache.logging.log4j.core.util.ContextDataProvider;
+import org.apache.logging.log4j.util.PropertiesUtil;
 import org.apache.logging.log4j.util.SortedArrayStringMap;
 import org.apache.logging.log4j.util.StringMap;
 
 @ServiceProvider(value = ContextDataProvider.class, resolution = Resolution.OPTIONAL)
 public class TomcatContextDataProvider implements ContextDataProvider {
 
+    private static final String CONTEXT_DATA_ENABLED = "log4j2.tomcatContextDataEnabled";
+    private static final StringMap EMPTY_STRING_MAP = new SortedArrayStringMap();
+
+    static {
+        EMPTY_STRING_MAP.freeze();
+    }
+
     private final ConcurrentMap<Integer, Map<String, String>> mapCache = new ConcurrentHashMap<>();
     private final ConcurrentMap<Integer, StringMap> stringMapCache = new ConcurrentHashMap<>();
+    private final boolean enabled;
+
+    public TomcatContextDataProvider() {
+        enabled = PropertiesUtil.getProperties().getBooleanProperty(CONTEXT_DATA_ENABLED);
+    }
 
     @Override
     public Map<String, String> supplyContextData() {
-        final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-        final int hashCode = System.identityHashCode(tccl);
-        return mapCache.computeIfAbsent(hashCode, __ -> {
-            final HashMap<String, String> map = new HashMap<>(3);
-            if (tccl instanceof WebappProperties) {
-                final WebappProperties props = (WebappProperties) tccl;
-                map.put(TomcatLookup.CONTEXT_NAME, props.getWebappName());
-                map.put(TomcatLookup.ENGINE_NAME, props.getServiceName());
-                map.put(TomcatLookup.HOST_NAME, props.getHostName());
-            }
-            return Collections.unmodifiableMap(map);
-        });
+        if (enabled) {
+            final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+            final int hashCode = System.identityHashCode(tccl);
+            return mapCache.computeIfAbsent(hashCode, __ -> {
+                final Map<String, String> map = new HashMap<>(3);
+                if (tccl instanceof WebappProperties) {
+                    final WebappProperties props = (WebappProperties) tccl;
+                    map.put(TomcatLookup.CONTEXT_NAME, props.getWebappName());
+                    map.put(TomcatLookup.ENGINE_NAME, props.getServiceName());
+                    map.put(TomcatLookup.HOST_NAME, props.getHostName());
+                }
+                return Collections.unmodifiableMap(map);
+            });
+        }
+        return Collections.emptyMap();
     }
 
     @Override
     public StringMap supplyStringMap() {
-        final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-        final int hashCode = System.identityHashCode(tccl);
-        return stringMapCache.computeIfAbsent(hashCode, __ -> {
-            final StringMap map = new SortedArrayStringMap(3);
-            if (tccl instanceof WebappProperties) {
-                final WebappProperties props = (WebappProperties) tccl;
-                map.putValue(TomcatLookup.CONTEXT_NAME, props.getWebappName());
-                map.putValue(TomcatLookup.ENGINE_NAME, props.getServiceName());
-                map.putValue(TomcatLookup.HOST_NAME, props.getHostName());
-            }
-            map.freeze();
-            return map;
-        });
+        if (enabled) {
+            final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+            final int hashCode = System.identityHashCode(tccl);
+            return stringMapCache.computeIfAbsent(hashCode, __ -> {
+                final StringMap map = new SortedArrayStringMap(3);
+                if (tccl instanceof WebappProperties) {
+                    final WebappProperties props = (WebappProperties) tccl;
+                    map.putValue(TomcatLookup.CONTEXT_NAME, props.getWebappName());
+                    map.putValue(TomcatLookup.ENGINE_NAME, props.getServiceName());
+                    map.putValue(TomcatLookup.HOST_NAME, props.getHostName());
+                }
+                map.freeze();
+                return map;
+            });
+        }
+        return EMPTY_STRING_MAP;
     }
 }

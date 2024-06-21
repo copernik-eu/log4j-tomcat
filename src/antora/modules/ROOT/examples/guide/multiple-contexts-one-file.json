@@ -1,0 +1,33 @@
+{
+  "Configuration": {
+    "Properties": {
+      "Property": [
+        {
+          "name": "context.name",
+          "value": "catalina"
+        }
+      ]
+    },
+    "Appenders": {
+      "Console": {
+        "name": "CONSOLE",
+        "direct": true,
+        "JsonTemplateLayout": {
+          "EventTemplateAdditionalField": { // <1>
+            "key": "context.name",
+            "value": "${tomcat:context.name}"
+          }
+        },
+        "TimeBasedTriggeringPolicy": {}
+      }
+    },
+    "Loggers": {
+      "Root": {
+        "level": "INFO",
+        "AppenderRef": {
+          "ref": "CONSOLE"
+        }
+      }
+    }
+  }
+}

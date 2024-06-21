@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
+<!-- tag::license[]
+  ~
   ~ Copyright © 2024 Piotr P. Karwasz
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +14,8 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  -->
+  ~
+  ~ end::license[] -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
@@ -22,7 +24,6 @@
     <version>3.0.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>eu.copernik</groupId>
   <artifactId>tomcat-juli-to-log4j</artifactId>
   <name>Tomcat JULI to Log4j API bridge</name>
   <description>Tomcat JULI implementation that forwards to the Log4j API.</description>

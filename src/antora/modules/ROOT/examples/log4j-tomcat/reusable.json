@@ -1,0 +1,55 @@
+{
+  "Configuration": {
+    // tag::default[]
+    "Properties": {
+      "Property": [
+        // tag::ignore[]
+        {
+          "name": "logs.dir",
+          "value": "${sys:catalina.base}/logs"
+        },
+        {
+          "name": "one.line.pattern",
+          "value": "%d{dd-MMM-yyyy HH:mm:ss.SSS} %p [%t] %C.%M %m%n"
+        },
+        // end::ignore[]
+        {
+          "name": "context.name",
+          "value": "catalina"
+        }
+      ]
+    },
+    // end::default[]
+    "Appenders": {
+      // tag::appender[]
+      "RollingFile": {
+        "name": "FILE",
+        "filePattern": "${logs.dir}/${tomcat:context.name}.%d{yyyy-MM-dd}.log", // <1>
+        "PatternLayout": {
+          "pattern": "${one.line.pattern}"
+        },
+        "DirectWriteRolloverStrategy": {
+          "Delete": {
+            "basePath": "${logs.dir}",
+            "IfFileName": {
+              "regex": "${tomcat:context.name}\\.\\d{4}-\\d{2}-\\d{2}\\.log"
+            },
+            "IfLastModified": {
+              "age": "P90D"
+            }
+          }
+        },
+        "TimeBasedTriggeringPolicy": {}
+      }
+      // end::appender[]
+    },
+    "Loggers": {
+      "Root": {
+        "level": "INFO",
+        "AppenderRef": {
+          "ref": "FILE"
+        }
+      }
+    }
+  }
+}

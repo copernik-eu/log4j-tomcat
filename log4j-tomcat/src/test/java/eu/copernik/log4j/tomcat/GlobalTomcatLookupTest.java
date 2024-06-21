@@ -25,7 +25,7 @@ import org.apache.logging.log4j.core.lookup.StrLookup;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class GlobalTomcatLookupTest {
+class GlobalTomcatLookupTest {
 
     static Stream<String> lookupWorksProperly() {
         return TomcatLookupTest.lookupWorksProperly().map(args -> (String) args.get()[0]);

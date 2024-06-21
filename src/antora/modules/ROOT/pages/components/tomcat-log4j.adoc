@@ -1,0 +1,79 @@
+////
+// tag::license[]
+//
+// Copyright © 2024 Piotr P. Karwasz
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// end::license[]
+////
+
+= Tomcat components
+:servlet-api-quote: Servlet API Specification https://jakarta.ee/specifications/servlet/6.0/jakarta-servlet-spec-6.0#web-application-class-loader[10.7.2]
+
+The xref:components.adoc#tomcat-log4j[`tomcat-log4j`] artifact contains Tomcat classloaders that delegate the Log4j API classes to the parent.
+
+[#classloaders]
+== Classloaders
+
+One of the main obstacles to the usage of Log4j as a global logging backend for the server and all applications is the Servlet API parent-last delegation model:
+
+[quote,id=servlet-api,'{servlet-api-quote}']
+____
+The container should not allow applications to override or access the container’s implementation classes.
+It is recommended also that the application class loader be implemented so that classes and resources packaged within the WAR are loaded in preference to classes and resources residing in container-wide library JARs.
+____
+
+This delegation model implies that applications that ship with their own copy of Log4j API will not use the global logging backend.
+The `tomcat-log4j` artifact contains two classloaders that solve this problem by always looking for Log4j API in the parent classloader first.
+
+[#classloaders-installation]
+=== Installation
+
+To use a global Log4j API for all web applications, you need to:
+
+include::partial$tomcat-dirs.adoc[]
+
+. Install Log4j API in either the _system_ or _common_
+{tomcat-url}/class-loader-howto.html[Tomcat classloader]:
+
+* If you wish to replace at the same time Tomcat's logging subsystem, follow the
+xref:components/tomcat-juli-to-log4j.adoc#installation[Bridge installation instructions].
+* If you **do not** with to replace Tomcat's logging subsystem, add the `log4j-api-{log4j-version}.jar` artifact and a Log4j API implementation to the `$CATALINA_BASE/lib` folder of your Tomcat instance.
+You can download the artifact from
+https://repo.maven.apache.org/maven2/org/apache/logging/log4j/log4j-api/{log4j-version}[this Maven Central location].
+See
+{log4j-api-url}/manual/installation.html#impl[Installing a logging implementation] for details on how to install the implementation.
+
+. Add the `tomcat-log4j-{project-version}.jar` artifact to the `$CATALINA_BASE/lib` folder of your Tomcat installation.
+You can download the artifact from
+{maven-base-url}/tomcat-log4j/{project-version}/[this Maven Central location].
+
+. Configure the context of each web application to use
+`eu.copernik.tomcat.log4j.loader.Log4jParallelWebappClassLoader`
+as classloader.
+You can do it by modifying the `$CATALINA_BASE/conf/context.xml` file to include a properly configured
+{tomcat-url}/config/loader.html[`Loader` element]:
++
+[source,xml]
+----
+include::example$tomcat-log4j/context.xml[tags=!license]
+----
++
+--
+<1> Specifies an alternative classloader to use.
+--
++
+See
+{tomcat-url}/config/context.html#Defining_a_context[Defining a context]
+in Tomcat documentation for more ways to define the context of a web application.

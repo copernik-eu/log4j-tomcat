@@ -1,0 +1,104 @@
+////
+// tag::license[]
+//
+// Copyright © 2024 Piotr P. Karwasz
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// end::license[]
+////
+
+= Tomcat JULI to Log4j API bridge
+
+Tomcat uses an internal logging API called
+{tomcat-url}/logging.html[Tomcat JULI].
+The Tomcat JULI to Log4j API bridge contains an implementation of Tomcat JULI, which forwards all log events to
+{log4j-api-url}/manual/api.html[Log4j API].
+
+[#installation]
+== Installation
+
+To install the bridge, you need to:
+
+. Create a `$CATALINA_BASE/bin/logging` folder and add the following content:
+
+* Add xref:components.adoc#tomcat-juli-to-log4j[`tomcat-jul-to-log4j-{project-version}.jar`].
+You can download the artifact from
+{maven-base-url}/tomcat-jul-to-log4j/{project-version}/[this Maven Central location].
+* Add `log4j-api-{log4j-version}.jar`.
+You can download the artifact from
+https://repo.maven.apache.org/maven2/org/apache/logging/log4j/log4j-api/{log4j-version}[this Maven Central location].
+* Add a Log4j API implementation.
+See
+{log4j-api-url}/manual/installation.html#impl[Installing a logging implementation]
+in the Log4j documentation site.
+
+. Create an empty `$CATALINA_BASE/conf/logging` folder for the configuration files of the logging backend.
+
+. Add the libraries to Tomcat's `CLASSPATH` environment variable:
+
+UNIX::
++
+On a UNIX system, create a `$CATALINA_BASE/bin/setenv.sh` files with the following content:
++
+[source,shell,subs="+attributes"]
+----
+include::example$setenv.sh[]
+----
+
+Windows::
++
+Windows users start the
+https://commons.apache.org/proper/commons-daemon/procrun.html#Procrun_monitor_application[Tomcat Monitor application], e.g. `$CATALINA_HOME/bin/tomcat{tomcat-major-version}w.exe`
+and add the libraries to "Java Classpath" configuration entry in the "Java" tab.
+
+include::partial$tomcat-dirs.adoc[]
+
+[#configuration]
+== Configuration
+
+You need to configure the logging implementation of your choice.
+
+[#configuration-log4j-core]
+=== Log4j Core Configuration
+
+If you use
+{log4j-api-url}/manual/implementation.html[Log4j Core]
+as logging implementation, and you wish to keep the standard Tomcat log files, create a `$CATALINA_BASE/conf/logging/log4j2.xml` file like the one below:
+
+[tabs]
+====
+XML::
++
+.Example `log4j2.xml` file equivalent to Tomcat's standard configuration
+[source,xml]
+----
+include::example$tomcat-jul-to-log4j/log4j2.xml[tags=!license]
+----
+
+JSON::
++
+.Example `log4j2.json` file equivalent to Tomcat's standard configuration
+[source,json]
+----
+include::example$tomcat-jul-to-log4j/log4j2.json[]
+----
+
+YAML::
++
+.Example `log4j2.yaml` file equivalent to Tomcat's standard configuration
+[source,yaml]
+----
+include::example$tomcat-jul-to-log4j/log4j2.yaml[tags=!license]
+----
+====
