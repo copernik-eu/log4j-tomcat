@@ -1,0 +1,72 @@
+////
+// tag::license[]
+//
+// Copyright © 2024 Piotr P. Karwasz
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// end::license[]
+////
+= Copernik.eu extensions for Log4j and Tomcat
+
+The Copernik.eu extensions for Log4j and Tomcat are a set of small artifacts that improve the integration between
+https://logging.apache.org/log4j/index.html[Apache Log4j]
+and
+https://tomcat.apache.org/[Apache Tomcat].
+
+Do you want to use Log4j Core as Tomcat's logging system?::
++
+See the xref:guide.adoc[].
+
+Are you looking for an in-depth description of the artifacts?::
++
+See xref:components.adoc[].
+
+== Download
+
+=== Source
+
+The source code of the project is maintained in the
+https://github.com/copernik-eu/log4j-tomcat[`copernik-eu/log4j-tomcat` GitHub repository].
+
+The source code of the latest release is available on the
+https://github.com/copernik-eu/log4j-tomcat/releases/tag/v{project-version}[GitHub releases page].
+
+=== Binary
+
+All the artifacts are published on
+https://central.sonatype.com/[Maven Central]
+under the `copernik.eu` group id.
+See xref:components.adoc[] for more details on their coordinates.
+
+A binary archive containing all the artifacts together with Log4j {log4j-version} is available on the
+https://github.com/copernik-eu/log4j-tomcat/releases/tag/v{project-version}[GitHub releases page].
+
+== License
+
+The Copernik.eu extensions for Log4j and Tomcat are available under the
+https://www.apache.org/licenses/LICENSE-2.0[Apache License, version 2.0].
+
+== Security
+
+=== Supported Versions
+
+Only the most recent release of Copernik.eu Log4j2 Plugins is supported.
+
+=== Reporting a Vulnerability
+
+If you have encountered an unlisted security vulnerability or other unexpected behaviour that has security impact, please report them privately to the [maintainer](mailto:security@copernik.eu).
+
+=== Past Vulnerabilities
+
+None so far...

@@ -1,0 +1,40 @@
+////
+// tag::license[]
+//
+// Copyright © 2024 Piotr P. Karwasz
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// end::license[]
+////
+
+.Click here for a definition of `CATALINA_BASE` and `CATALINA_HOME`
+[%collapsible]
+====
+A Tomcat installation can be split in two separate folders:
+
+`CATALINA_HOME`:: This is the folder that contains the code of the server and the default configuration of Tomcat instances.
+
+`CATALINA_BASE`:: This is the folder that contains the runtime configuration and working directories of a specific Tomcat instance.
+
+The typical location of these folders varies between OSes:
+
+Debian::
++
+On Debian and derived GNU/Linux distributions `CATALINA_BASE` is located in the `/var/lib` folder (e.g. `/var/lib/tomcat{tomcat-major-version}`).
+`CATALINA_HOME` on the other hand is located in `/usr/share` (e.g. `/usr/share/tomcat{tomcat-major-version}`).
+
+Windows::
++
+If you installed Tomcat from the MSI package, both `CATALINA_BASE` and `CATALINA_HOME` point to the same subfolder of `C:\Program Files\Apache Software Foundation`, e.g. `C:\Program Files\Apache Software Foundation/Tomcat {tomcat-minor-version}`.
+====

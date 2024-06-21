@@ -34,7 +34,7 @@ import org.apache.catalina.loader.ParallelWebappClassLoader;
  * <pre>
  * &lt;Context&gt;
  *     ...
- *     &lt;Loader loaderClass="eu.copernik.log4j.tomcat.Log4jParallelWebappClassLoader"/&gt;
+ *     &lt;Loader loaderClass="eu.copernik.tomcat.log4j.loader.Log4jParallelWebappClassLoader"/&gt;
  * &lt;/Context&gt;
  * </pre>
  *
@@ -44,9 +44,7 @@ import org.apache.catalina.loader.ParallelWebappClassLoader;
  */
 public class Log4jParallelWebappClassLoader extends ParallelWebappClassLoader {
 
-    public Log4jParallelWebappClassLoader() {
-        super();
-    }
+    public Log4jParallelWebappClassLoader() {}
 
     public Log4jParallelWebappClassLoader(final ClassLoader parent) {
         super(parent);
@@ -65,7 +63,7 @@ public class Log4jParallelWebappClassLoader extends ParallelWebappClassLoader {
     @SuppressFBWarnings("DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED")
     public Log4jParallelWebappClassLoader copyWithoutTransformers() {
         final Log4jParallelWebappClassLoader result = new Log4jParallelWebappClassLoader(getParent());
-        super.copyStateWithoutTransformers(result);
+        copyStateWithoutTransformers(result);
         startUnchecked(result);
         return result;
     }

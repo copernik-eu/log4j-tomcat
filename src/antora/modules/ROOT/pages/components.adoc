@@ -1,0 +1,56 @@
+////
+// tag::license[]
+//
+// Copyright © 2024 Piotr P. Karwasz
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// end::license[]
+////
+
+= Components
+
+Due to Tomcat's complex classloader architecture (cf. https://tomcat.apache.org/tomcat-10.1-doc/class-loader-howto.html[Class Loader How-TO]), the Copernik.eu extensions for Log4j and Tomcat has been split into three artifacts.
+This way each of them can be deployed in a different classloader:
+
+* The `tomcat-juli-to-log4j` artifact needs to be in the same classloader as `tomcat-juli`: the _system_ classloader.
+* The `tomcat-log4j` artifact needs to be in the same classloader as the Tomcat server classes: the _common_ or _server_ classloaders.
+* The `log4j-tomcat` artifact needs to be in the same classloader as Log4j Core.
+Depending on the deployment, this might be the _system_, _common_ or _webapp_ classloader.
+
+[#tomcat-juli-to-log4j]
+== `tomcat-juli-to-log4j`
+
+The `tomcat-juli-to-log4j` artifact provides a bridge between Tomcat JUL and Log4j API.
+
+See xref:components/tomcat-juli-to-log4j.adoc[] for more details.
+
+include::partial$components/tomcat-juli-to-log4j.adoc[]
+
+[#tomcat-log4j]
+== `tomcat-log4j`
+
+The `tomcat-log4j` artifact provides Tomcat components that improve its usage with Log4j.
+
+See xref:components/tomcat-log4j.adoc[] for more details.
+
+include::partial$components/tomcat-log4j.adoc[]
+
+[#log4j-tomcat]
+== `log4j-tomcat`
+
+The `log4j-tomcat` artifact provides Log4j Core plugins that extend the possibility of the logging backend by providing Tomcat-specific functionalities.
+
+See xref:components/log4j-tomcat.adoc[] for more details.
+
+include::partial$components/log4j-tomcat.adoc[]

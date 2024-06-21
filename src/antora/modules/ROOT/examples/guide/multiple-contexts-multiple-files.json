@@ -1,0 +1,43 @@
+{
+  "Configuration": {
+    "Properties": {
+      "Property": [
+        {
+          "name": "logs.dir",
+          "value": "${sys:catalina.base}/logs"
+        },
+        {
+          "name": "context.name",
+          "value": "catalina"
+        }
+      ]
+    },
+    "Appenders": {
+      "RollingFile": {
+        "name": "FILE",
+        "filePattern": "${logs.dir}/${tomcat:context.name}.%d{yyyy-MM-dd}.log",
+        "JsonTemplateLayout": {},
+        "DirectWriteRolloverStrategy": {
+          "Delete": {
+            "basePath": "${logs.dir}",
+            "IfFileName": {
+              "regex": "${tomcat:context.name}\\.\\d{4}-\\d{2}-\\d{2}\\.log"
+            },
+            "IfLastModified": {
+              "age": "P90D"
+            }
+          }
+        },
+        "TimeBasedTriggeringPolicy": {}
+      }
+    },
+    "Loggers": {
+      "Root": {
+        "level": "INFO",
+        "AppenderRef": {
+          "ref": "FILE"
+        }
+      }
+    }
+  }
+}

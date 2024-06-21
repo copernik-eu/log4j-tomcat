@@ -18,11 +18,13 @@ package eu.copernik.log4j.tomcat;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.logging.log4j.core.util.ContextDataProvider;
+import org.apache.logging.log4j.test.junit.SetTestProperty;
 import org.junit.jupiter.api.Test;
 
-public class GlobalTomcatContextDataProviderTest {
+class GlobalTomcatContextDataProviderTest {
 
     @Test
+    @SetTestProperty(key = "log4j2.tomcatContextDataEnabled", value = "true")
     void mapsAreEmpty() {
         final ContextDataProvider provider = new TomcatContextDataProvider();
         assertThat(provider.supplyContextData()).isEmpty();

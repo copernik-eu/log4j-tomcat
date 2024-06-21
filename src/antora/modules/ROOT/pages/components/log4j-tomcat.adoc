@@ -1,0 +1,438 @@
+////
+// tag::license[]
+//
+// Copyright © 2024 Piotr P. Karwasz
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// end::license[]
+////
+
+= Log4j Core Plugins
+
+The xref:components.adoc#log4j-tomcat[`log4j-tomcat`] artifact contains three Log4j Core plugins that help to split logs between web applications:
+
+* The <<TomcatContextSelector,Tomcat Context Selector>> can be used to split loggers into separate
+{log4j-api-url}/manual/architecture.html#LoggerContext[logger contexts], one context for each application.
+* The <<TomcatLookup,Tomcat Lookup>> can be used to retrieve the name of the current Tomcat engine, host or context and use it in a Log4j Core
+{log4j-api-url}/manual/configuration.html[configuration file].
+* The <<TomcatContextDataProvider,Tomcat Context Data Provider>> injects the name of the current Tomcat engine, host and context into the context data of each event.
+
+[#installation]
+== Generic installation
+
+The Log4j Core Plugins can be installed in two different ways:
+
+[#global-installation]
+Global::
++
+If you use Log4j Core as Tomcat's logging system, follow the
+xref:components/tomcat-juli-to-log4j.adoc#installation[Tomcat JULI to Log4j API bridge installation instructions]
+and add the `log4j-tomcat-{project-version}.jar` artifact to you `$CATALINA_BASE/bin/logging` folder.
++
+You can download the artifact from
+{maven-base-url}/log4j-tomcat/{project-version}/[this Maven Central location].
+
+[#web-app-installation]
+Web application::
++
+If you want to add the plugins to a single web application, add this dependency to your dependency management system:
++
+--
+include::partial$components/log4j-tomcat.adoc[]
+--
+
+[#TomcatContextSelector]
+== Tomcat Context Selectors
+
+The Tomcat Context Selectors are a pair
+{log4j-api-url}/manual/extending.html#ContextSelector[`ContextSelector`]
+that splits loggers according to the value of the current context classloader.
+The **name** of the logger contexts is determined as follows:
+
+* if the context classloader is the classloader of a web application, the name is of the form `/<engine>/<host>/<context>`, where:
+
+`<engine>`::
+The name of the Tomcat Engine container.
+See {tomcat-url}/config/engine.html[Tomcat Engine Container] for more details.
+
+`<host>`::
+The name of the Tomcat Host container.
+See {tomcat-url}/config/host.html[Tomcat Host Container] for more details.
+
+`<context>`::
+The base file name of the Tomcat Context container.
+See {tomcat-url}/config/context.html#Naming[Tomcat Context Naming] for more details.
+
+* if the context classloader is not the classloader of a web application, the name is `-tomcat`.
+
+Due to the Log4j Core automatic configuration procedure (see
+{log4j-api-url}/manual/configuration.html#automatic-configuration[Configuration location]) you can:
+
+* Provide a configuration file for a single web application by creating a file named:
++
+--
+`log4j2/<engine>/<host>/<context>.<extension>`
+--
++
+on the classpath of the application, e.g.
++
+--
+`log4j2/Catalina/localhost/app.xml`
+--
+
+* Provide a configuration file for the global Tomcat logger context by creating a `log4j2-tomcat.xml` file.
+
+[WARNING]
+====
+Loggers used by the libraries in
+https://tomcat.apache.org/tomcat-9.0-doc/class-loader-howto.html#Class_Loader_Definitions[Tomcat's common classloader]
+will be assigned to the web application that was active when the logger was created.
+The assignment will be appropriate only if the library uses **instance** field to store application-specific loggers.
+
+Tomcat libraries use instance and static logger fields correctly to differentiate the log statements specific to a web application from the global ones.
+Most third-party libraries, however, only use **static** logger fields.
+The output of those libraries will be assigned to the global logger context or in the worst case scenario to the logger context of the first web application that initialized the library.
+====
+
+[#TomcatContextSelector-installation]
+=== Installation
+
+[NOTE]
+====
+Using Tomcat Context Selectors only makes sense if you installed the Copernik.eu Log4j Core Plugins globally.
+In this section, we assume you followed the <<global-installation,installation instructions above>>.
+====
+
+To use the Tomcat Context Selector, you need to set the
+{log4j-api-url}/manual/systemproperties.html#log4j2.contextSelector[`log4j2.contextSelector`]
+Log4j configuration property to one of:
+
+`eu.copernik.log4j.tomcat.TomcatContextSelector`::
+This selector creates synchronous loggers that append log events to the target resource on the calling thread.
+
+`eu.copernik.log4j.tomcat.TomcatAsyncContextSelector`::
+This selector creates asynchronous loggers.
+See
+{log4j-api-url}/manual/async.html[Asynchronous Loggers]
+for more details.
++
+[WARNING]
+=====
+The `TomcatAsyncContextSelector` required additional dependencies on the classpath.
+
+Add `disruptor-{disruptor-version}.jar` to the `$CATALINA_BASE/bin/logging` folder.
+You can download the artifact from
+https://repo.maven.apache.org/maven2/com/lmax/disruptor/{disruptor-version}/[this Maven Central location].
+
+=====
+
+This can be easily achieved, by creating a `log4j2.component.properties` file in the `$CATALINA_BASE/conf/logging` folder with the following content:
+
+[source,properties]
+----
+log4j2.contextSelector = eu.copernik.log4j.tomcat.TomcatContextSelector
+----
+
+or
+
+[source,properties]
+----
+log4j2.contextSelector = eu.copernik.log4j.tomcat.TomcatAsyncContextSelector
+----
+
+See
+{log4j-api-url}/manual/systemproperties.html#property-sources[Log4j Property Sources]
+for alternative ways to set a Log4j configuration property.
+
+[#TomcatLookup]
+== Tomcat Lookup
+
+[cols="1h,4"]
+|===
+| Syntax
+| `+${tomcat:<key>}+`
+
+where `<key>` is one of the <<TomcatLookup-keys>>.
+|===
+
+The Tomcat Lookup is a
+{log4j-api-url}/manual/lookups.html[Log4j Core Lookup]
+that can be used in configuration files to retrieve parameters of the web application active on the current thread.
+
+The lookup uses the context classloader, so it can be used eagerly (`+${tomcat:<key>}+`) in every value of the configuration file or lazily (`+$${tomcat:<key>}+`) in the configuration attributes that accept runtime evaluation.
+See
+{log4j-api-url}/manual/configuration.html#lazy-property-substitution[Runtime Property Substitution]
+for more details.
+
+The keys supported by the lookup are:
+
+.Tomcat Lookup supported keys
+[cols="1m,4",id=TomcatLookup-keys]
+|===
+| Key | Description
+
+| [[context.name]]context.name
+|
+The base name of the current Tomcat Context Container.
+
+See {tomcat-url}/config/context.html#Naming[Tomcat Context Naming] for more details.
+
+| [[context.logger]]context.logger
+a|
+Returns the name of the logger that captures all
+https://jakarta.ee/specifications/servlet/6.1/apidocs/jakarta.servlet/jakarta/servlet/genericservlet#log(java.lang.String)[`GenericServlet.log()`]
+method calls for the current web application, e.g.
+--
+`org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[ROOT]`
+--
+
+| [[host.name]]host.name
+|
+The name of the current Tomcat Host Container.
+
+See {tomcat-url}/config/host.html[Tomcat Host Container] for more details.
+
+| [[host.logger]]host.logger
+a|
+Returns the name of the logger that captures all
+https://jakarta.ee/specifications/servlet/6.1/apidocs/jakarta.servlet/jakarta/servlet/genericservlet#log(java.lang.String)[`GenericServlet.log()`]
+method calls for the current Tomcat Host container, e.g.
+--
+`org.apache.catalina.core.ContainerBase.[Catalina].[localhost]`
+--
+
+| [[engine.name]]engine.name
+|
+The name of the current Tomcat Engine Container.
+
+See {tomcat-url}/config/engine.html[Tomcat Engine Container] for more details.
+
+| [[engine.logger]]engine.logger
+a|
+Returns the name of the logger that captures all
+https://jakarta.ee/specifications/servlet/6.1/apidocs/jakarta.servlet/jakarta/servlet/genericservlet#log(java.lang.String)[`GenericServlet.log()`]
+method calls for the current Tomcat Engine container, e.g.
+--
+`org.apache.catalina.core.ContainerBase.[Catalina]`
+--
+
+| [[classloader.webappName]]classloader.webappName
+|
+An alias for <<context.name,`context.name`>>,
+it returns the same value as `${classloader.webappName}` in a Tomcat default `logging.properties` file.
+
+See
+{tomcat-url}/logging.html#Using_java.util.logging_(default)[Using `java.util.logging`] in Tomcat's documentation for details.
+
+| [[classloader.hostName]]classloader.hostName
+|
+An alias for <<host.name,`host.name`>>,
+it returns the same value as `${classloader.hostName}` in a Tomcat default `logging.properties` file.
+
+See
+{tomcat-url}/logging.html#Using_java.util.logging_(default)[Using `java.util.logging`] in Tomcat's documentation for details.
+
+| [[classloader.serviceName]]classloader.serviceName
+|
+An alias for <<engine.name,`engine.name`>>,
+it returns the same value as `${classloader.serviceName}` in a Tomcat default `logging.properties` file.
+
+See
+{tomcat-url}/logging.html#Using_java.util.logging_(default)[Using `java.util.logging`] in Tomcat's documentation for details.
+|===
+
+[#TomcatLookup-examples]
+=== Configuration examples
+
+[TIP]
+=====
+Since the Tomcat Lookup returns `null`, whenever we are outside a web application context, it is useful to give a default value to its keys in the
+{log4j-api-url}/manual/configuration.html#property-substitution[`Properties` section]
+of the configuration file.
+
+For example, we can assign a default value to `+${tomcat:context.name}+` with the snippet below:
+
+[tabs]
+====
+XML::
++
+.Snippet from an {examples-url}/log4j-plugins/reusable.xml[example `log4j2.xml` file]
+[source,xml,indent=0]
+----
+include::example$log4j-tomcat/reusable.xml[tags=default;!ignore]
+----
+
+JSON::
++
+.Snippet from an {examples-url}/log4j-plugins/reusable.json[example `log4j2.json` file]
+[source,json,indent=0]
+----
+include::example$log4j-tomcat/reusable.json[tags=default;!ignore]
+----
+
+YAML::
++
+.Snippet from an {examples-url}/log4j-plugins/reusable.yaml[example `log4j2.yaml` file]
+[source,yaml,indent=0]
+----
+include::example$log4j-tomcat/reusable.yaml[tags=default;!ignore]
+----
+====
+
+The examples below all contain this definition.
+=====
+
+[#single-configuration-multiple-contexts]
+==== Single configuration file for multiple contexts
+
+If we use <<TomcatContextSelector,Tomcat Context Selector>> to split the loggers into one logger context per-application, we can still use a single configuration file.
+To provide a different configuration to each context, we can use the Tomcat Lookup.
+
+The snippet below provides a rolling file appender named after the Tomcat Context, as in the
+xref:components/tomcat-juli-to-log4j.adoc#configuration-log4j-core[standard configuration file]:
+
+[tabs]
+====
+XML::
++
+.Snippet from an {examples-url}/log4j-plugins/reusable.xml[example `log4j2.xml` file]
+[source,xml,indent=0]
+----
+include::example$log4j-tomcat/reusable.xml[tag=appender]
+----
+
+JSON::
++
+.Snippet from an {examples-url}/log4j-plugins/reusable.json[example `log4j2.json` file]
+[source,json,indent=0]
+----
+include::example$log4j-tomcat/reusable.json[tag=appender]
+----
+
+YAML::
++
+.Snippet from an {examples-url}/log4j-plugins/reusable.yaml[example `log4j2.yaml` file]
+[source,yaml,indent=0]
+----
+include::example$log4j-tomcat/reusable.yaml[tag=appender]
+----
+====
+
+<1> We name the log file after the context name.
+For the global logger context we provide the fallback name `catalina`.
+
+[#single-context-dynamic-appenders]
+==== Single context with dynamic appenders
+
+If we have a single logger context for the entire JVM, we can still split application-specific logs into separate log files.
+To do that we just need to wrap the example above in a
+{log4j-api-url}/manual/appenders/delegating.html#RoutingAppender[Routing Appender].
+
+[tabs]
+====
+XML::
++
+.Snippet from an {examples-url}/log4j-plugins/routing.xml[example `log4j2.xml` file]
+[source,xml,indent=0]
+----
+include::example$log4j-tomcat/routing.xml[tag=appender]
+----
+
+JSON::
++
+.Snippet from an {examples-url}/log4j-plugins/routing.json[example `log4j2.json` file]
+[source,json,indent=0]
+----
+include::example$log4j-tomcat/routing.json[tag=appender]
+----
+
+YAML::
++
+.Snippet from an {examples-url}/log4j-plugins/routing.yaml[example `log4j2.yaml` file]
+[source,yaml,indent=0]
+----
+include::example$log4j-tomcat/routing.yaml[tag=appender]
+----
+====
+
+[#TomcatContextDataProvider]
+== Tomcat Context Data Provider
+
+If log events from multiple web applications are written to the same target resource, we can tag the events to determine their origin.
+See
+{log4j-api-url}/manual/api.html#fish-tagging[Fish tagging]
+for more information.
+
+The Tomcat Context Data Provider uses the Log4j
+{log4j-api-url}/manual/extending.html#ContextDataProvider[`ContextDataProvider`]
+extension point to inject the key/value pairs below into the context data map of each log event.
+
+.Tomcat context data key/value pairs
+[cols="1m,4",id=TomcatContextDataProvider-keys]
+|===
+| Key | Value
+
+| [[TomcatContextDataProvider-context.name]]context.name
+|
+The base name of the current Tomcat Context Container.
+
+See {tomcat-url}/config/context.html#Naming[Tomcat Context Naming] for more details.
+
+| [[TomcatContextDataProvider-host.name]]host.name
+|
+The name of the current Tomcat Host Container.
+
+See {tomcat-url}/config/host.html[Tomcat Host Container] for more details.
+
+| [[TomcatContextDataProvider-engine.name]]engine.name
+|
+The name of the current Tomcat Engine Container.
+
+See {tomcat-url}/config/engine.html[Tomcat Engine Container] for more details.
+
+|===
+
+[WARNING]
+====
+The Tomcat Context Data Provider is only useful if you installed the Copernik.eu Log4j Core Plugins using the
+<<global-installation,global installation method>>.
+
+The provider must be explicitly enabled by setting the
+<<log4j2.tomcatContextDataEnabled,`log4j2.tomcatContextDataEnabled`>> configuration property to `true`.
+This can be done by adding to the `$CATALINA_BASE/conf/logging/log4j2.component.properties` file the following snippet:
+
+[source,properties]
+----
+log4j2.tomcatContextDataEnabled = true
+----
+====
+
+[#configuration-properties]
+== Configuration properties
+
+The Copernik.eu Log4j Core Plugins recognize the following
+{log4j-api-url}/manual/systemproperties.html[Log4j configuration properties]:
+
+[id=log4j2.tomcatContextDataEnabled]
+=== `log4j2.tomcatContextDataEnabled`
+
+[cols="1h,5"]
+|===
+| Env. variable | `LOG4J_TOMCAT_CONTEXT_DATA_ENABLED`
+| Type          | `boolean`
+| Default value | `false`
+|===
+
+If set to `true`, the context data map of each log event is enriched by Tomcat-specific properties.
+See <<TomcatContextDataProvider,Tomcat Context Data Provider>> for more information.
