@@ -142,7 +142,7 @@
     <maven.site.deploy.skip>true</maven.site.deploy.skip>
 
     <!-- Maven plugin dependencies -->
-    <error_prone.version>2.29.2</error_prone.version>
+    <error_prone.version>2.30.0</error_prone.version>
     <findsecbugs-plugin.version>1.13.0</findsecbugs-plugin.version>
     <palantir-java-format.version>2.49.0</palantir-java-format.version>
 
