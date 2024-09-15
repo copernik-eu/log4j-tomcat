@@ -1,0 +1,37 @@
+////
+// tag::license[]
+//
+// Copyright © $YEAR Piotr P. Karwasz
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// end::license[]
+////
+
+= Copernik.eu extensions for Log4j and Tomcat
+
+image:https://codecov.io/gh/copernik-eu/log4j-tomcat/graph/badge.svg?token=CTUJTRHWXR[link=https://codecov.io/gh/copernik-eu/log4j-tomcat,title=codecov]
+
+The Copernik.eu extensions for Log4j and Tomcat are a loose set of plugins for
+https://logging.apache.org/log4j/2.x/manual/implementation.html[Apache Log4j Core]
+and
+https://tomcat.apache.org/[Apache Tomcat]
+that improve the interoperability between the two projects.
+
+For more information see
+https://copernik.eu/tomcat/3.x/[the project website].
+
+== License
+
+The Copernik.eu extensions for Log4j and Tomcat are distributed under the
+https://apache.org/licenses/LICENSE-2.0[Apache License, version 2.0].
