@@ -15,9 +15,9 @@
 # limitations under the License.
 #
 # end::license[]
-name: home
-title: Home
-version: ~
+name: tomcat
+title: Extensions for Log4j and Tomcat
+version: 3.x
 start_page: index.adoc
 asciidoc:
   attributes:
