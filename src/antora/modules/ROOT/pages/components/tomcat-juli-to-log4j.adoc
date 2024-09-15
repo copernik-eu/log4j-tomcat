@@ -32,7 +32,7 @@ To install the bridge, you need to:
 
 . Create a `$CATALINA_BASE/bin/logging` folder and add the following content:
 
-* Add xref:components.adoc#tomcat-juli-to-log4j[`tomcat-jul-to-log4j-{project-version}.jar`].
+* Add xref:components/index.adoc#tomcat-juli-to-log4j[`tomcat-jul-to-log4j-{project-version}.jar`].
 You can download the artifact from
 {maven-base-url}/tomcat-jul-to-log4j/{project-version}/[this Maven Central location].
 * Add `log4j-api-{log4j-version}.jar`.

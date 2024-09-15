@@ -30,7 +30,7 @@ See the xref:guide.adoc[].
 
 Are you looking for an in-depth description of the artifacts?::
 +
-See xref:components.adoc[].
+See xref:components/index.adoc[].
 
 == Download
 
@@ -47,7 +47,7 @@ https://github.com/copernik-eu/log4j-tomcat/releases/tag/v{project-version}[GitH
 All the artifacts are published on
 https://central.sonatype.com/[Maven Central]
 under the `copernik.eu` group id.
-See xref:components.adoc[] for more details on their coordinates.
+See xref:components/index.adoc[] for more details on their coordinates.
 
 A binary archive containing all the artifacts together with Log4j {log4j-version} is available on the
 https://github.com/copernik-eu/log4j-tomcat/releases/tag/v{project-version}[GitHub releases page].

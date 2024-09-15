@@ -20,7 +20,7 @@
 
 = Log4j Core Plugins
 
-The xref:components.adoc#log4j-tomcat[`log4j-tomcat`] artifact contains three Log4j Core plugins that help to split logs between web applications:
+The xref:components/index.adoc#log4j-tomcat[`log4j-tomcat`] artifact contains three Log4j Core plugins that help to split logs between web applications:
 
 * The <<TomcatContextSelector,Tomcat Context Selector>> can be used to split loggers into separate
 {log4j-api-url}/manual/architecture.html#LoggerContext[logger contexts], one context for each application.

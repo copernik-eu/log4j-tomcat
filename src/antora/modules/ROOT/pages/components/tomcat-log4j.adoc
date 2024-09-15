@@ -21,7 +21,7 @@
 = Tomcat components
 :servlet-api-quote: Servlet API Specification https://jakarta.ee/specifications/servlet/6.0/jakarta-servlet-spec-6.0#web-application-class-loader[10.7.2]
 
-The xref:components.adoc#tomcat-log4j[`tomcat-log4j`] artifact contains Tomcat classloaders that delegate the Log4j API classes to the parent.
+The xref:components/index.adoc#tomcat-log4j[`tomcat-log4j`] artifact contains Tomcat classloaders that delegate the Log4j API classes to the parent.
 
 [#classloaders]
 == Classloaders

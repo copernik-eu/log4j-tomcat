@@ -19,7 +19,7 @@
 ////
 
 * xref:guide.adoc[User guide]
-* xref:components.adoc[Components]
+* xref:components/index.adoc[Components]
 ** xref:components/tomcat-juli-to-log4j.adoc[]
 ** xref:components/tomcat-log4j.adoc[]
 ** xref:components/log4j-tomcat.adoc[]
