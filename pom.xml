@@ -182,7 +182,7 @@
     <junit-bom.version>5.11.0</junit-bom.version>
     <log4j-bom.version>2.24.0</log4j-bom.version>
     <mockito-core.version>5.13.0</mockito-core.version>
-    <tomcat.version>10.1.29</tomcat.version>
+    <tomcat.version>10.1.30</tomcat.version>
 
   </properties>
 
