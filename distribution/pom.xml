@@ -24,7 +24,7 @@
     <version>${revision}</version>
   </parent>
 
-  <artifactId>copernik-tomcat-log4j</artifactId>
+  <artifactId>copernik-log4j-tomcat</artifactId>
   <packaging>pom</packaging>
   <name>Copernik.eu extensions for Log4j and Tomcat</name>
 
@@ -87,7 +87,7 @@
             </goals>
             <phase>package</phase>
             <configuration>
-              <appendAssemblyId>false</appendAssemblyId>
+              <appendAssemblyId>true</appendAssemblyId>
               <descriptors>
                 <descriptor>src/main/assembly/distribution.xml</descriptor>
               </descriptors>

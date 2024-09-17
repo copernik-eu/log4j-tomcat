@@ -51,8 +51,10 @@ To install all Copernik.eu plugins for Tomcat and Log4j:
 
 include::partial$tomcat-dirs.adoc[]
 
-* Download the `copernik-log4j-tomcat-{project-version}.zip` distribution archive available on the
-https://github.com/copernik-eu/log4j-tomcat/releases/tag/v{project-version}[GitHub releases page].
+* Download the
+https://github.com/copernik-eu/log4j-tomcat/releases/download/v{project-version}/copernik-log4j-tomcat-{project-version}-overlay.zip[`copernik-log4j-tomcat-{project-version}-overlay.zip`]
+distribution archive available on the
+https://github.com/copernik-eu/log4j-tomcat/releases/tag/v{project-version}[GitHub Release page].
 * Unzip the contents of the `overlay` folder of the archive in the `$CATALINA_BASE` folder of you Tomcat installation.
 * Customize if necessary the `$CATALINA_BASE/bin/setenv-log4j.sh` file and move it to `$CATALINA_BASE/bin/setenv.sh`.
 * Customize if necessary the `$CATALINA_BASE/conf/context-log4j.xml` file and move it to `$CATALINA_BASE/conf/context.xml`.
