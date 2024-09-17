@@ -5,6 +5,6 @@
        type="changed">
   <issue id="80" link="https://github.com/copernik-eu/log4j-plugins/issues/80"/>
   <description format="asciidoc">
-    Split Tomcat lookup into a `log4j-tomcat-lookup` artifact.
+    Split Tomcat classloaders into a new `tomcat-log4j` artifact.
   </description>
 </entry>

@@ -1,7 +1,7 @@
 ////
 // tag::license[]
 //
-// Copyright © $YEAR Piotr P. Karwasz
+// Copyright © 2024 Piotr P. Karwasz
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.

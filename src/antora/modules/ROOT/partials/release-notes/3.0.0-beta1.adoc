@@ -65,7 +65,7 @@ https://oss.copernik.eu/tomcat/3.x/components/log4j-tomcat#TomcatContextDataProv
 ////
 // tag::license[]
 //
-// Copyright © $YEAR Piotr P. Karwasz
+// Copyright © 2024 Piotr P. Karwasz
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -95,8 +95,7 @@ https://oss.copernik.eu/tomcat/3.x/components/log4j-tomcat#TomcatContextDataProv
 [#release-notes-3-0-0-beta1-changed]
 === Changed
 
-* Add Tomcat JULI implementation in artifact `log4j-tomcat-juli`. (https://github.com/copernik-eu/log4j-plugins/issues/101[#101])
+* Add Tomcat JULI implementation in a new `tomcat-juli-to-log4j` artifact. (https://github.com/copernik-eu/log4j-plugins/issues/101[#101])
 * Add a context data provider to fill the "engine.name", "host.name" and "context.name" context entries. (https://github.com/copernik-eu/log4j-plugins/issues/103[#103])
 * Add context selector based on Tomcat's thread context classloaders. (https://github.com/copernik-eu/log4j-plugins/issues/105[#105])
-* Split Tomcat lookup into a `log4j-tomcat-lookup` artifact. (https://github.com/copernik-eu/log4j-plugins/issues/80[#80])
-* Added `org.apache.logging:logging-parent` as parent of the `log4j-plugins-parent`.
+* Split Tomcat classloaders into a new `tomcat-log4j` artifact. (https://github.com/copernik-eu/log4j-plugins/issues/80[#80])

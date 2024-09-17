@@ -959,6 +959,7 @@
           <plugin>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-changelog-maven-plugin</artifactId>
+            <inherited>false</inherited>
             <executions>
               <execution>
                 <id>generate-changelog</id>

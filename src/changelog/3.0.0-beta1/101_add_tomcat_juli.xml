@@ -5,6 +5,6 @@
        type="changed">
   <issue id="101" link="https://github.com/copernik-eu/log4j-plugins/issues/101"/>
   <description format="asciidoc">
-    Add Tomcat JULI implementation in artifact `log4j-tomcat-juli`.
+    Add Tomcat JULI implementation in a new `tomcat-juli-to-log4j` artifact.
   </description>
 </entry>
