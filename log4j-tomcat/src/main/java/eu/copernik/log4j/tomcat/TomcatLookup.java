@@ -21,9 +21,13 @@ import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.lookup.StrLookup;
 
 /**
- * Resolves the names specific to Tomcat's internal component structure. The names of the properties
- * starting with {@code classloader.} are kept for compatibility with the original Tomcat JULI
- * implementation.
+ * Resolves the names specific of Tomcat specific components:
+ * <ul>
+ *     <li>The current Tomcat Context.</li>
+ *     <li>The current Tomcat Host.</li>
+ *     <li>The current Tomcat Engine.</li>
+ * </ul>
+ * @see <a href="https://oss.copernik.eu/tomcat/3.x/components/log4j-tomcat#TomcatLookup">Tomcat Lookup</a>
  */
 @Plugin(name = "tomcat", category = StrLookup.CATEGORY)
 public class TomcatLookup implements StrLookup {
@@ -38,12 +42,6 @@ public class TomcatLookup implements StrLookup {
     static final String HOST_NAME_COMPAT = "classloader.hostName";
     static final String HOST_LOGGER = "host.logger";
 
-    private static final String SERVICE_LOGGER_FORMAT = "org.apache.catalina.core.ContainerBase.[%s]";
-    private static final String HOST_LOGGER_FORMAT = "org.apache.catalina.core.ContainerBase.[%s].[%s]";
-    private static final String CONTEXT_LOGGER_FORMAT = "org.apache.catalina.core.ContainerBase.[%s].[%s].[%s]";
-
-    public static final TomcatLookup INSTANCE = new TomcatLookup();
-
     @Override
     public String lookup(String key) {
         final ClassLoader cl = Thread.currentThread().getContextClassLoader();
@@ -54,18 +52,21 @@ public class TomcatLookup implements StrLookup {
                 case ENGINE_NAME_COMPAT:
                     return props.getServiceName();
                 case ENGINE_LOGGER:
-                    return String.format(SERVICE_LOGGER_FORMAT, props.getServiceName());
+                    return String.format("org.apache.catalina.core.ContainerBase.[%s]", props.getServiceName());
                 case HOST_NAME:
                 case HOST_NAME_COMPAT:
                     return props.getHostName();
                 case HOST_LOGGER:
-                    return String.format(HOST_LOGGER_FORMAT, props.getServiceName(), props.getHostName());
+                    return String.format(
+                            "org.apache.catalina.core.ContainerBase.[%s].[%s]",
+                            props.getServiceName(), props.getHostName());
                 case CONTEXT_NAME:
                 case CONTEXT_NAME_COMPAT:
                     return props.getWebappName();
                 case CONTEXT_LOGGER:
                     return String.format(
-                            CONTEXT_LOGGER_FORMAT, props.getServiceName(), props.getHostName(), props.getWebappName());
+                            "org.apache.catalina.core.ContainerBase.[%s].[%s].[%s]",
+                            props.getServiceName(), props.getHostName(), props.getWebappName());
             }
         }
         return null;

@@ -38,11 +38,21 @@ public class Log4jLog implements Log {
 
     private ExtendedLogger logger;
 
-    // Only used by ServiceLoader
+    /**
+     * Creates a logger with an empty name.
+     * <p>
+     *     Only used by {@link java.util.ServiceLoader}.
+     * </p>
+     */
     public Log4jLog() {
         this(LogManager.ROOT_LOGGER_NAME);
     }
 
+    /**
+     * Creates a logger with the given name.
+     *
+     * @param name The name of the logger.
+     */
     public Log4jLog(final String name) {
         this(LogManager.getFactory(), name);
     }

@@ -28,6 +28,18 @@ import org.apache.logging.log4j.util.PropertiesUtil;
 import org.apache.logging.log4j.util.SortedArrayStringMap;
 import org.apache.logging.log4j.util.StringMap;
 
+/**
+ * A context data provider for Tomcat
+ * <p>
+ *     It injects into Log4j Core context data the:
+ * </p>
+ * <ul>
+ *     <li>Name of the current Tomcat Context.</li>
+ *     <li>Name of the current Tomcat Host.</li>
+ *     <li>Name of the current Tomcat Engine.</li>
+ * </ul>
+ * @see <a href="https://oss.copernik.eu/tomcat/3.x/components/log4j-tomcat#TomcatContextDataProvider">Tomcat context data provider</a>
+ */
 @ServiceProvider(value = ContextDataProvider.class, resolution = Resolution.OPTIONAL)
 public class TomcatContextDataProvider implements ContextDataProvider {
 
@@ -40,11 +52,7 @@ public class TomcatContextDataProvider implements ContextDataProvider {
 
     private final ConcurrentMap<Integer, Map<String, String>> mapCache = new ConcurrentHashMap<>();
     private final ConcurrentMap<Integer, StringMap> stringMapCache = new ConcurrentHashMap<>();
-    private final boolean enabled;
-
-    public TomcatContextDataProvider() {
-        enabled = PropertiesUtil.getProperties().getBooleanProperty(CONTEXT_DATA_ENABLED);
-    }
+    private final boolean enabled = PropertiesUtil.getProperties().getBooleanProperty(CONTEXT_DATA_ENABLED);
 
     @Override
     public Map<String, String> supplyContextData() {

@@ -31,6 +31,14 @@ import org.apache.logging.log4j.core.selector.ContextSelector;
 import org.apache.logging.log4j.spi.LoggerContextShutdownAware;
 import org.apache.logging.log4j.status.StatusLogger;
 
+/**
+ * The synchronous version of {@link TomcatAsyncContextSelector}:
+ * <ul>
+ *     <li>It assigns a different logger context to each web application running on Tomcat.</li>
+ *     <li>It create synchronous loggers.</li>
+ * </ul>
+ * @see <a href="https://oss.copernik.eu/tomcat/3.x/components/log4j-tomcat#TomcatContextSelector">Tomcat Context Selectors</a>
+ */
 public class TomcatContextSelector implements ContextSelector, LoggerContextShutdownAware {
 
     private static final String GLOBAL_CONTEXT_NAME = "-tomcat";
@@ -167,6 +175,14 @@ public class TomcatContextSelector implements ContextSelector, LoggerContextShut
         return false;
     }
 
+    /**
+     * Creates a new context with the given name and configuration.
+     *
+     * @param name The name of the context, may be {@code null}.
+     * @param configLocation The location of the configuration file.
+     *                       If {@code null}, the configuration file will be autodetected.
+     * @return A new logger context.
+     */
     protected LoggerContext createContext(final String name, final URI configLocation) {
         final LoggerContext context = new LoggerContext(name, null, configLocation);
         context.addShutdownListener(this);

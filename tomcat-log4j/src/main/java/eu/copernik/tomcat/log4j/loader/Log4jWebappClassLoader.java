@@ -44,10 +44,18 @@ import org.apache.catalina.loader.WebappClassLoader;
  */
 public class Log4jWebappClassLoader extends WebappClassLoader {
 
+    /**
+     * Creates a classloader with no parent.
+     */
     public Log4jWebappClassLoader() {
         super();
     }
 
+    /**
+     * Creates a classloader with the given parent.
+     *
+     * @param parent The parent classloader.
+     */
     public Log4jWebappClassLoader(final ClassLoader parent) {
         super(parent);
     }

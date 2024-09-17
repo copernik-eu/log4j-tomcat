@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * Contains several Log4j Core extensions to use with Apache Tomcat.
+ */
 @Export
 @Version("3.0.0")
 package eu.copernik.log4j.tomcat;

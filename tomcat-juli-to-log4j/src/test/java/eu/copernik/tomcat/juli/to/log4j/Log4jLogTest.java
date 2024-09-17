@@ -36,25 +36,25 @@ import org.junit.jupiter.api.Test;
 class Log4jLogTest {
 
     private static final String MESSAGE = "MESSAGE";
-    private static final Throwable T = new RuntimeException();
 
     @Test
     void location() {
-        final Log log = LogFactory.getLog("location");
+        Log log = LogFactory.getLog("location");
+        Throwable t = new Throwable();
         int i = 0;
         int currentLine = 45;
         log.trace(MESSAGE + i++);
-        log.trace(MESSAGE + i++, T);
+        log.trace(MESSAGE + i++, t);
         log.debug(MESSAGE + i++);
-        log.debug(MESSAGE + i++, T);
+        log.debug(MESSAGE + i++, t);
         log.info(MESSAGE + i++);
-        log.info(MESSAGE + i++, T);
+        log.info(MESSAGE + i++, t);
         log.warn(MESSAGE + i++);
-        log.warn(MESSAGE + i++, T);
+        log.warn(MESSAGE + i++, t);
         log.error(MESSAGE + i++);
-        log.error(MESSAGE + i++, T);
+        log.error(MESSAGE + i++, t);
         log.fatal(MESSAGE + i++);
-        log.fatal(MESSAGE + i, T);
+        log.fatal(MESSAGE + i, t);
         // Verification
         final LoggerContext context = LoggerContext.getContext(false);
         final Configuration config = context.getConfiguration();
@@ -63,17 +63,17 @@ class Log4jLogTest {
         i = 0;
         assertThat(events).hasSize(12);
         assertLocation(events.get(i), Level.TRACE, MESSAGE + i++, null, ++currentLine);
-        assertLocation(events.get(i), Level.TRACE, MESSAGE + i++, T, ++currentLine);
+        assertLocation(events.get(i), Level.TRACE, MESSAGE + i++, t, ++currentLine);
         assertLocation(events.get(i), Level.DEBUG, MESSAGE + i++, null, ++currentLine);
-        assertLocation(events.get(i), Level.DEBUG, MESSAGE + i++, T, ++currentLine);
+        assertLocation(events.get(i), Level.DEBUG, MESSAGE + i++, t, ++currentLine);
         assertLocation(events.get(i), Level.INFO, MESSAGE + i++, null, ++currentLine);
-        assertLocation(events.get(i), Level.INFO, MESSAGE + i++, T, ++currentLine);
+        assertLocation(events.get(i), Level.INFO, MESSAGE + i++, t, ++currentLine);
         assertLocation(events.get(i), Level.WARN, MESSAGE + i++, null, ++currentLine);
-        assertLocation(events.get(i), Level.WARN, MESSAGE + i++, T, ++currentLine);
+        assertLocation(events.get(i), Level.WARN, MESSAGE + i++, t, ++currentLine);
         assertLocation(events.get(i), Level.ERROR, MESSAGE + i++, null, ++currentLine);
-        assertLocation(events.get(i), Level.ERROR, MESSAGE + i++, T, ++currentLine);
+        assertLocation(events.get(i), Level.ERROR, MESSAGE + i++, t, ++currentLine);
         assertLocation(events.get(i), Level.FATAL, MESSAGE + i++, null, ++currentLine);
-        assertLocation(events.get(i), Level.FATAL, MESSAGE + i, T, ++currentLine);
+        assertLocation(events.get(i), Level.FATAL, MESSAGE + i, t, ++currentLine);
     }
 
     private void assertLocation(

@@ -44,8 +44,16 @@ import org.apache.catalina.loader.ParallelWebappClassLoader;
  */
 public class Log4jParallelWebappClassLoader extends ParallelWebappClassLoader {
 
+    /**
+     * Creates a classloader with no parent.
+     */
     public Log4jParallelWebappClassLoader() {}
 
+    /**
+     * Creates a classloader with the given parent.
+     *
+     * @param parent The parent classloader.
+     */
     public Log4jParallelWebappClassLoader(final ClassLoader parent) {
         super(parent);
     }

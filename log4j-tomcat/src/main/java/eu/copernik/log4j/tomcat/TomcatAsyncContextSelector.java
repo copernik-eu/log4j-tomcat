@@ -19,6 +19,14 @@ import java.net.URI;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.async.AsyncLoggerContext;
 
+/**
+ * The asynchronous version of {@link TomcatContextSelector}:
+ * <ul>
+ *     <li>It assigns a different logger context to each web application running on Tomcat.</li>
+ *     <li>It create asynchronous loggers.</li>
+ * </ul>
+ * @see <a href="https://oss.copernik.eu/tomcat/3.x/components/log4j-tomcat#TomcatContextSelector">Tomcat Context Selectors</a>
+ */
 public class TomcatAsyncContextSelector extends TomcatContextSelector {
 
     @Override
