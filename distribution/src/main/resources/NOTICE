@@ -1,0 +1,6 @@
+Contains software developed at the Apache Software Foundation:
+
+* bin/logging/log4j-api-${log4j-bom.version}.jar
+* bin/logging/log4j-core-${log4j-bom.version}.jar
+* bin/logging/log4j-layout-template-json-${log4j-bom.version}.jar
+* lib/log4j-jakarta-web-${log4j-bom.version}.jar
