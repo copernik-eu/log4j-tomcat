@@ -157,6 +157,7 @@
     <bnd-baseline-maven-plugin.version>7.0.0</bnd-baseline-maven-plugin.version>
     <bnd-maven-plugin.version>7.0.0</bnd-maven-plugin.version>
     <build-helper-maven-plugin.version>3.6.0</build-helper-maven-plugin.version>
+    <central-publishing-maven-plugin.version>0.5.0</central-publishing-maven-plugin.version>
     <cyclonedx-maven-plugin.version>2.8.1</cyclonedx-maven-plugin.version>
     <exam-maven-plugin.version>4.13.5</exam-maven-plugin.version>
     <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
@@ -330,6 +331,12 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
           <version>${build-helper-maven-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <version>${central-publishing-maven-plugin.version}</version>
         </plugin>
 
         <plugin>
@@ -1011,6 +1018,15 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
             <version>${maven-gpg-plugin.version}</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+                <phase>verify</phase>
+              </execution>
+            </executions>
           </plugin>
 
           <plugin>
@@ -1029,7 +1045,6 @@
           <plugin>
             <groupId>org.sonatype.central</groupId>
             <artifactId>central-publishing-maven-plugin</artifactId>
-            <version>0.5.0</version>
             <extensions>true</extensions>
             <configuration>
               <publishingServerId>central</publishingServerId>

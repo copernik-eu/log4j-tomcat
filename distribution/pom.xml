@@ -29,7 +29,6 @@
   <name>Copernik.eu extensions for Log4j and Tomcat</name>
 
   <properties>
-    <maven.deply.skip>true</maven.deply.skip>
     <maven.install.skip>true</maven.install.skip>
   </properties>
 
@@ -95,6 +94,14 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <configuration>
+          <skipPublishing>true</skipPublishing>
+        </configuration>
       </plugin>
 
     </plugins>
