@@ -1,0 +1,102 @@
+////
+// tag::license[]
+//
+// Copyright © $YEAR Piotr P. Karwasz
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// end::license[]
+////
+
+////
+    ██     ██  █████  ██████  ███    ██ ██ ███    ██  ██████  ██
+    ██     ██ ██   ██ ██   ██ ████   ██ ██ ████   ██ ██       ██
+    ██  █  ██ ███████ ██████  ██ ██  ██ ██ ██ ██  ██ ██   ███ ██
+    ██ ███ ██ ██   ██ ██   ██ ██  ██ ██ ██ ██  ██ ██ ██    ██
+     ███ ███  ██   ██ ██   ██ ██   ████ ██ ██   ████  ██████  ██
+
+    IF THIS FILE DOESN'T HAVE A `.ftl` SUFFIX, IT IS AUTO-GENERATED, DO NOT EDIT IT!
+
+    Version-specific release notes (`7.8.0.adoc`, etc.) are generated from `src/changelog/*/.release-notes.adoc.ftl`.
+    Auto-generation happens during `generate-sources` phase of Maven.
+    Hence, you must always
+
+    1. Find and edit the associated `release-notes.adoc.ftl`
+    2. Run `./mvnw -Pchangelog-release`
+    3. Commit both `release-notes.adoc.ftl` and the generated `7.8.0.adoc`
+////
+
+[#release-notes-3-0-0-beta1]
+== 3.0.0-beta1
+
+Release date:: 2024-09-17
+
+This release constitutes a major rework of the initial release.
+Since the Tomcat Log4j Core lookup and Tomcat Classloader need to be in different classloaders, the `log4j-tomcat` is split in two parts:
+
+* the
+https://oss.copernik.eu/tomcat/3.x/components/log4j-tomcat#TomcatLookup[Tomcat Lookup]
+is left in the `log4j-tomcat` artifact.
+* the
+https://oss.copernik.eu/tomcat/3.x/components/tomcat-log4j#classloaders[Tomcat classloaders]
+are moved to a new `tomcat-log4j` artifact.
+
+=== New components
+
+The set of tools to integrate Log4j and Tomcat is expanded to include:
+
+* a new
+https://oss.copernik.eu/tomcat/3.x/components/tomcat-juli-to-log4j[Tomcat JULI to Log4j API bridge].
+* two
+https://oss.copernik.eu/tomcat/3.x/components/log4j-tomcat#TomcatContextSelector[Tomcat context selectors].
+* a
+https://oss.copernik.eu/tomcat/3.x/components/log4j-tomcat#TomcatContextDataProvider[Tomcat context data provider].
+
+////
+// tag::license[]
+//
+// Copyright © $YEAR Piotr P. Karwasz
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// end::license[]
+////
+
+////
+// Original version from Apache Log4j project
+////
+
+
+[#release-notes-3-0-0-beta1-added]
+=== Added
+
+* Add parallel version of `Log4jWebappClassLoader`. (https://github.com/copernik-eu/log4j-plugins/issues/46[#46])
+
+[#release-notes-3-0-0-beta1-changed]
+=== Changed
+
+* Add Tomcat JULI implementation in artifact `log4j-tomcat-juli`. (https://github.com/copernik-eu/log4j-plugins/issues/101[#101])
+* Add a context data provider to fill the "engine.name", "host.name" and "context.name" context entries. (https://github.com/copernik-eu/log4j-plugins/issues/103[#103])
+* Add context selector based on Tomcat's thread context classloaders. (https://github.com/copernik-eu/log4j-plugins/issues/105[#105])
+* Split Tomcat lookup into a `log4j-tomcat-lookup` artifact. (https://github.com/copernik-eu/log4j-plugins/issues/80[#80])
+* Added `org.apache.logging:logging-parent` as parent of the `log4j-plugins-parent`.

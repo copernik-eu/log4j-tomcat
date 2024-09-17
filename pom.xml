@@ -21,7 +21,7 @@
 
   <groupId>eu.copernik</groupId>
   <artifactId>log4j-plugins-parent</artifactId>
-  <version>3.0.0-SNAPSHOT</version>
+  <version>${revision}</version>
   <packaging>pom</packaging>
   <name>Copernik.eu Log4j2 extensions</name>
   <description>Various extensions for Log4j2</description>
@@ -92,6 +92,8 @@
   </distributionManagement>
 
   <properties>
+    <revision>3.0.0-beta1</revision>
+
     <gpg.keyname>piotr.github@karwasz.org</gpg.keyname>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -138,7 +140,7 @@
     <bnd-jpms-module-info>$[bnd-module-name];access=0</bnd-jpms-module-info>
 
     <!-- Enable reproducible builds -->
-    <project.build.outputTimestamp>2024-02-22T21:28:00Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2024-09-17T18:07:00Z</project.build.outputTimestamp>
 
     <!-- Disable maven-site-plugin -->
     <maven.site.skip>true</maven.site.skip>
@@ -693,6 +695,21 @@
               </rules>
             </configuration>
           </execution>
+          <!-- Will be overridden in the `release` profile -->
+          <execution>
+            <id>enforce-no-snapshots</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireSnapshotVersion>
+                  <message>A release must use the `release` profile</message>
+                </requireSnapshotVersion>
+              </rules>
+              <fail>true</fail>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
 
@@ -844,28 +861,6 @@
         </configuration>
       </plugin>
 
-      <!--
-        ~ SITE configuration
-        -->
-
-      <plugin>
-        <groupId>org.asciidoctor</groupId>
-        <artifactId>asciidoctor-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>generate-documentation</id>
-            <goals>
-              <goal>process-asciidoc</goal>
-            </goals>
-            <phase>site</phase>
-            <inherited>false</inherited>
-            <configuration>
-              <preserveDirectories>true</preserveDirectories>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
     </plugins>
   </build>
 
@@ -914,10 +909,103 @@
 
     <profile>
 
+      <id>changelog-release</id>
+
+      <build>
+
+        <defaultGoal>log4j-changelog:release@release-changelog</defaultGoal>
+
+        <plugins>
+
+          <plugin>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-changelog-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>release-changelog</id>
+                <configuration>
+                  <releaseVersion>${project.version}</releaseVersion>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+
+      </build>
+
+    </profile>
+
+    <profile>
+
+      <id>changelog-generate</id>
+
+      <build>
+
+        <defaultGoal>log4j-changelog:export@generate-changelog</defaultGoal>
+
+        <plugins>
+
+          <plugin>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-changelog-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>generate-changelog</id>
+                <configuration>
+                  <outputDirectory>${project.basedir}/src/antora/modules/ROOT</outputDirectory>
+                  <indexTemplates>
+                    <template>
+                      <source>index.adoc.ftl</source>
+                      <target>pages/release-notes.adoc</target>
+                    </template>
+                  </indexTemplates>
+                  <changelogTemplates>
+                    <template>
+                      <source>.release-notes.adoc.ftl</source>
+                      <target>partials/release-notes/%v.adoc</target>
+                    </template>
+                  </changelogTemplates>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+
+      </build>
+
+    </profile>
+
+    <profile>
+
       <id>release</id>
 
       <build>
         <plugins>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>enforce-no-snapshots</id>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules combine.self="override">
+                    <requireReleaseDeps>
+                      <message>A release cannot have SNAPSHOT dependencies</message>
+                      <onlyWhenRelease>true</onlyWhenRelease>
+                    </requireReleaseDeps>
+                    <requireReleaseVersion>
+                      <message>A release cannot be a SNAPSHOT version</message>
+                    </requireReleaseVersion>
+                  </rules>
+                  <fail>true</fail>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
 
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -936,6 +1024,16 @@
                 </goals>
               </execution>
             </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <version>0.5.0</version>
+            <extensions>true</extensions>
+            <configuration>
+              <publishingServerId>central</publishingServerId>
+            </configuration>
           </plugin>
 
         </plugins>

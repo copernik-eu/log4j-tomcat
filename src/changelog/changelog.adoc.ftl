@@ -1,7 +1,7 @@
 ////
 // tag::license[]
 //
-// Copyright © 2024 Piotr P. Karwasz
+// Copyright © $YEAR Piotr P. Karwasz
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,9 +18,18 @@
 // end::license[]
 ////
 
-* xref:guide.adoc[User guide]
-* xref:components/index.adoc[Components]
-** xref:components/tomcat-juli-to-log4j.adoc[]
-** xref:components/tomcat-log4j.adoc[]
-** xref:components/log4j-tomcat.adoc[]
-* xref:release-notes.adoc[Release Notes]
+////
+// Original version from Apache Log4j project
+////
+
+<#if entriesByType?size gt 0>
+    <#list entriesByType as entryType, entries>
+
+[#release-notes-${release.version?replace("[^a-zA-Z0-9]", "-", "r")}-${entryType?lower_case}]
+=== ${entryType?capitalize}
+
+        <#list entries as entry>
+* ${entry.description.text?replace("\\s+", " ", "r")}<#if entry.issues?has_content> (<#list entry.issues as issue>${issue.link}[#${issue.id}]<#if issue?has_next>, </#if></#list>)</#if>
+        </#list>
+    </#list>
+</#if>

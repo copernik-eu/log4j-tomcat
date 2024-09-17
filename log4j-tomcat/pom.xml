@@ -21,7 +21,7 @@
   <parent>
     <groupId>eu.copernik</groupId>
     <artifactId>log4j-plugins-parent</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>${revision}</version>
   </parent>
   <artifactId>log4j-tomcat</artifactId>
   <name>Log4j Core plugins for Tomcat</name>
