@@ -29,6 +29,11 @@
     <fileSet>
       <directory>src/main/resources</directory>
       <outputDirectory>/</outputDirectory>
+      <filtered>false</filtered>
+    </fileSet>
+    <fileSet>
+      <directory>src/main/filtered</directory>
+      <outputDirectory>/</outputDirectory>
       <filtered>true</filtered>
     </fileSet>
   </fileSets>
