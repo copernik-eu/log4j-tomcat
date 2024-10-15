@@ -183,7 +183,7 @@
     <assertj-core.version>3.26.3</assertj-core.version>
     <junit-bom.version>5.11.2</junit-bom.version>
     <log4j-bom.version>2.24.1</log4j-bom.version>
-    <mockito-core.version>5.14.1</mockito-core.version>
+    <mockito-core.version>5.14.2</mockito-core.version>
     <tomcat.version>11.0.0</tomcat.version>
 
   </properties>
