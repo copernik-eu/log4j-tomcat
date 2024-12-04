@@ -158,7 +158,7 @@
     <build-helper-maven-plugin.version>3.6.0</build-helper-maven-plugin.version>
     <central-publishing-maven-plugin.version>0.6.0</central-publishing-maven-plugin.version>
     <cyclonedx-maven-plugin.version>2.9.0</cyclonedx-maven-plugin.version>
-    <exam-maven-plugin.version>4.13.5</exam-maven-plugin.version>
+    <exam-maven-plugin.version>4.14.0</exam-maven-plugin.version>
     <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
     <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
     <log4j-changelog-maven-plugin.version>0.9.0</log4j-changelog-maven-plugin.version>
